@@ -9,6 +9,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    exclude: ['leaflet.heat'],
+  },
   build: {
     chunkSizeWarningLimit: 800,
     rollupOptions: {
@@ -16,7 +19,7 @@ export default defineConfig({
         manualChunks(id: string) {
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('react-router-dom')) return 'vendor-react'
           if (id.includes('recharts')) return 'vendor-charts'
-          if (id.includes('leaflet')) return 'vendor-leaflet'
+          if (id.includes('leaflet') && !id.includes('leaflet.heat')) return 'vendor-leaflet'
           if (id.includes('lucide-react') || id.includes('clsx') || id.includes('tailwind-merge')) return 'vendor-ui'
         },
       },
