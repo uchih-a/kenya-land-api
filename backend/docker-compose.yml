@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: kenya_land_api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount folders directly so changes reflect instantly without rebuilding
+      - ./app:/app/app
+      - ./ml_models:/app/ml_models
+      - ./data:/app/data
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - land_network
+
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: kenya_land_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-kenya_land}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - land_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: kenya_land_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - land_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  land_network:
+    driver: bridge

@@ -1,0 +1,69 @@
+# ── Environment & Secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# ── Virtual Environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs.txt
+logs/
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Alembic ───────────────────────────────────────────────────────────────────
+# Keep migration files but ignore compiled cache
+alembic/__pycache__/
+
+# ── Data files (large) ────────────────────────────────────────────────────────
+# Comment these out if you want to push them to GitHub
+# data/*.parquet
+# data/*.gpkg
+
+# ── ML Models (large binaries) ────────────────────────────────────────────────
+# Comment these out if you want to push them to GitHub
+# ml_models/*.pt
+# ml_models/*.pkl
+# ml_models/*.zip
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+*.save
+file-sturucture.txt

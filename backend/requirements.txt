@@ -1,0 +1,42 @@
+# Web Framework & Server
+fastapi==0.109.0
+uvicorn==0.27.0.post1
+python-multipart==0.0.6
+pydantic-settings==2.1.0
+
+# Database & Spatial
+sqlalchemy==2.0.25
+geoalchemy2==0.14.3
+psycopg2-binary==2.9.9
+alembic==1.13.1
+email-validator>=2.0.0
+
+# Data Manipulation
+pandas==2.2.0
+numpy==1.26.3
+pyarrow==15.0.0
+fastparquet==2023.10.1
+
+# Machine Learning & SHAP
+torch==2.1.2
+pytorch-tabnet==4.1.0
+scikit-learn==1.4.0
+shap==0.44.1
+
+# Caching
+redis==5.0.1
+
+# Security & Auth
+python-dotenv==1.0.1
+pyjwt==2.8.0
+passlib[bcrypt,argon2]==1.7.4
+argon2-cffi>=23.1.0
+
+# LLM Integration
+google-generativeai==0.3.2
+
+geopandas==0.14.3
+mapclassify==2.6.1
+
+fiona==1.9.6
+pyogrio==0.7.2
