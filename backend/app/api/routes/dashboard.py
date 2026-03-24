@@ -33,33 +33,21 @@ redis_client = _make_redis_client()
 CACHE_TTL = 3600  # Cache data for 1 hour (3600 seconds)
 
 def get_cached_or_compute(cache_key: str, compute_func: Callable, response_model: Any):
-    """
-    Helper function to check Redis first. If missing or Redis is down,
-    computes the data via PostgreSQL and attempts to cache the result.
-    Gracefully handles missing Redis (e.g. Render free tier).
-    """
-    # 1. Try to get from cache
-    if redis_client is not None:
+    if redis_client:
         try:
             cached_data = redis_client.get(cache_key)
             if cached_data:
                 return response_model.model_validate_json(cached_data)
-        except redis.ConnectionError:
-            logger.warning("⚠️ Redis connection failed. Bypassing cache and querying DB directly.")
         except Exception as e:
-            logger.error(f"Redis read error: {str(e)}")
+            logger.warning(f"Redis read error: {e}")
 
-    # 2. Compute fresh data via Database
     result = compute_func()
 
-    # 3. Try to save to cache for next time
-    if redis_client is not None:
+    if redis_client:
         try:
             redis_client.setex(cache_key, CACHE_TTL, result.model_dump_json())
-        except redis.ConnectionError:
-            pass  # Graceful fallback: just ignore the cache failure
         except Exception as e:
-            logger.error(f"Redis write error: {str(e)}")
+            logger.warning(f"Redis write error: {e}")
 
     return result
 
