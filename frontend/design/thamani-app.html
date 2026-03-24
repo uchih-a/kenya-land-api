@@ -1,0 +1,2530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THAMANI AI — Kenya Land Valuation Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+/* ═══════════════════════════════════════════════
+   THAMANI AI — Design System Tokens
+   ═══════════════════════════════════════════════ */
+:root {
+  --bg-base:        #0A0F1E;
+  --bg-surface:     #111827;
+  --bg-card:        rgba(255,255,255,0.04);
+  --gold:           #D4AF37;
+  --gold-dim:       rgba(212,175,55,0.15);
+  --gold-border:    rgba(212,175,55,0.25);
+  --teal:           #14B8A6;
+  --teal-dim:       rgba(20,184,166,0.12);
+  --orange:         #EC5B13;
+  --text-primary:   #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary:  #475569;
+  --border:         rgba(255,255,255,0.08);
+  --border-hover:   rgba(212,175,55,0.30);
+  --font-mono:      'Space Mono', monospace;
+  --font-sans:      'DM Sans', sans-serif;
+  --radius-card:    12px;
+  --radius-pill:    9999px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════
+   GLOBAL BACKGROUND — Gold Patch System
+   ═══════════════════════════════════════════════ */
+.bg-patches {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.patch {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.patch-gold-tr {
+  width: 800px; height: 600px;
+  top: -200px; right: -200px;
+  background: radial-gradient(ellipse at center, rgba(212,175,55,0.13) 0%, rgba(212,175,55,0.04) 40%, transparent 70%);
+  filter: blur(40px);
+}
+.patch-gold-cl {
+  width: 600px; height: 500px;
+  top: 35%; left: -180px;
+  background: radial-gradient(ellipse at center, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.02) 50%, transparent 70%);
+  filter: blur(60px);
+}
+.patch-gold-bc {
+  width: 900px; height: 400px;
+  bottom: -100px; left: 25%;
+  background: radial-gradient(ellipse at center, rgba(212,175,55,0.06) 0%, transparent 60%);
+  filter: blur(50px);
+}
+.patch-teal {
+  width: 500px; height: 450px;
+  background: radial-gradient(ellipse at center, rgba(20,184,166,0.09) 0%, rgba(20,184,166,0.02) 50%, transparent 70%);
+  filter: blur(60px);
+}
+.dot-grid {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  background-image: radial-gradient(circle, rgba(212,175,55,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════════ */
+.app { position: relative; z-index: 2; }
+.page { display: none; min-height: 100dvh; }
+.page.active { display: block; }
+
+/* ═══════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════ */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  height: 64px;
+  background: rgba(10,15,30,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(212,175,55,0.08);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.logo-mark {
+  width: 14px; height: 14px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px rgba(212,175,55,0.6);
+  flex-shrink: 0;
+}
+.logo-text {
+  font-family: var(--font-mono);
+  font-size: 18px; font-weight: 700;
+  letter-spacing: 3px; color: var(--text-primary);
+}
+.logo-text span { color: var(--teal); }
+
+.nav-pill-wrap {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-pill);
+  padding: 4px; gap: 2px;
+}
+.nav-item {
+  padding: 8px 18px;
+  font-family: var(--font-sans);
+  font-size: 14px; font-weight: 500;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: color 0.2s;
+  border: none; background: none;
+  white-space: nowrap;
+}
+.nav-item:hover { color: var(--text-secondary); }
+.nav-item.active {
+  font-family: var(--font-mono);
+  color: var(--gold);
+  background: rgba(212,175,55,0.15);
+  border: 1px solid rgba(212,175,55,0.30);
+}
+.header-right a {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 7px 14px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.header-right a:hover { color: var(--gold); border-color: var(--gold-border); }
+
+/* ═══════════════════════════════════════════════
+   BOTTOM TASKBAR (mobile)
+   ═══════════════════════════════════════════════ */
+.taskbar {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 64px;
+  background: rgba(10,15,30,0.92);
+  backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(212,175,55,0.12);
+  z-index: 200;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+}
+.tab-btn {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  padding: 6px 16px;
+  border-radius: 12px;
+  cursor: pointer; border: none; background: none;
+  color: var(--text-tertiary);
+  transition: color 0.2s;
+  position: relative;
+}
+.tab-btn.active {
+  background: rgba(212,175,55,0.08);
+  color: var(--gold);
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute; bottom: -4px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px rgba(212,175,55,0.8);
+}
+.tab-label {
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.tab-btn:not(.active) .tab-label { display: none; }
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════ */
+.footer {
+  height: 52px;
+  background: rgba(10,15,30,0.98);
+  border-top: 1px solid rgba(212,175,55,0.08);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+}
+.footer-left {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-tertiary); font-size: 12px;
+  text-decoration: none;
+}
+.footer-left:hover { color: var(--gold); }
+.footer-right {
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-tertiary);
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%; background: #34D399;
+  box-shadow: 0 0 6px rgba(52,211,153,0.7);
+  animation: pulse 2s infinite;
+  display: inline-block; margin-right: 6px;
+}
+.status-online { color: #34D399; }
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.footer-sep { color: #1E2A3A; }
+
+/* ═══════════════════════════════════════════════
+   GLASS CARDS
+   ═══════════════════════════════════════════════ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  backdrop-filter: blur(12px);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: var(--border-hover); }
+.card-glow { box-shadow: 0 0 20px rgba(212,175,55,0.06); }
+
+/* ═══════════════════════════════════════════════
+   SECTION HEADERS
+   ═══════════════════════════════════════════════ */
+.section-header {
+  margin-bottom: 28px;
+  padding-left: 16px;
+  border-left: 3px solid rgba(212,175,55,0.6);
+}
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 3px;
+  margin-bottom: 4px;
+}
+.section-title {
+  font-family: var(--font-mono);
+  font-size: 24px; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 6px;
+}
+.section-insight {
+  font-family: var(--font-sans);
+  font-size: 14px; font-style: italic;
+  color: var(--text-secondary);
+  max-width: 600px;
+}
+
+/* ═══════════════════════════════════════════════
+   BADGES & PILLS
+   ═══════════════════════════════════════════════ */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 4px;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.badge-gold { background: rgba(212,175,55,0.15); color: var(--gold); border: 1px solid rgba(212,175,55,0.30); }
+.badge-teal { background: rgba(20,184,166,0.15); color: var(--teal); border: 1px solid rgba(20,184,166,0.30); }
+.badge-orange { background: rgba(236,91,19,0.15); color: var(--orange); border: 1px solid rgba(236,91,19,0.30); }
+.badge-green { background: rgba(52,211,153,0.15); color: #34D399; border: 1px solid rgba(52,211,153,0.30); }
+
+/* ═══════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, #EC5B13, #EA580C);
+  color: #0A0F1E;
+  font-family: var(--font-mono); font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  padding: 14px 28px; border-radius: var(--radius-pill);
+  border: none; cursor: pointer;
+  box-shadow: 0 0 28px rgba(236,91,19,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(236,91,19,0.5); }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent;
+  color: var(--gold);
+  font-size: 14px; font-weight: 500;
+  padding: 14px 28px; border-radius: var(--radius-pill);
+  border: 1px solid rgba(212,175,55,0.5); cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-secondary:hover { background: rgba(212,175,55,0.08); }
+
+.btn-gold {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, #D4AF37, #B8860B);
+  color: #0A0F1E;
+  font-family: var(--font-mono); font-size: 15px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  padding: 16px 32px; border-radius: var(--radius-card);
+  border: none; cursor: pointer;
+  box-shadow: 0 0 24px rgba(212,175,55,0.30);
+  transition: transform 0.2s; width: 100%;
+  justify-content: center;
+}
+.btn-gold:hover { transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════════
+   PAGE: LANDING
+   ═══════════════════════════════════════════════ */
+.landing-hero {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  min-height: calc(100dvh - 64px);
+  align-items: center;
+  padding: 0 40px 60px;
+  gap: 48px;
+}
+.hero-left { padding-top: 20px; }
+.eyebrow-line {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px;
+}
+.eyebrow-text {
+  font-family: var(--font-sans);
+  font-size: 11px; font-weight: 500;
+  color: var(--teal); text-transform: uppercase;
+  letter-spacing: 4px; white-space: nowrap;
+}
+.eyebrow-rule {
+  flex: 1; height: 1px;
+  background: rgba(20,184,166,0.4);
+}
+.headline { line-height: 0.92; margin-bottom: 28px; }
+.hl-1 {
+  display: block;
+  font-family: var(--font-mono); font-size: clamp(72px, 8vw, 104px); font-weight: 700;
+  background: linear-gradient(135deg, #D4AF37 0%, #F5E27A 50%, #B8860B 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hl-2 {
+  display: block;
+  font-family: var(--font-mono); font-size: clamp(72px, 8vw, 104px); font-weight: 700;
+  color: var(--text-primary);
+}
+.hl-3 {
+  display: block;
+  font-family: var(--font-mono); font-size: clamp(52px, 6vw, 76px); font-weight: 700;
+  -webkit-text-stroke: 1.5px var(--gold);
+  color: transparent; letter-spacing: 4px;
+}
+.hero-sub {
+  font-size: 17px; color: var(--text-secondary);
+  line-height: 1.65; max-width: 460px;
+  margin-bottom: 36px;
+}
+.cta-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.trust-line {
+  font-size: 12px; color: var(--text-tertiary);
+}
+
+/* Kenya Map SVG */
+.map-container {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.kenya-map-wrap {
+  position: relative; width: 100%; max-width: 500px;
+}
+.kenya-map-wrap::before {
+  content: '';
+  position: absolute; inset: -40px;
+  background: radial-gradient(ellipse at center, rgba(20,184,166,0.08) 0%, rgba(212,175,55,0.06) 40%, transparent 70%);
+  filter: blur(30px);
+  z-index: -1;
+}
+.kenya-svg { width: 100%; height: auto; }
+.kenya-svg path { transition: fill 0.2s, stroke 0.2s; cursor: pointer; }
+.kenya-svg .county-default { fill: rgba(20,184,166,0.06); stroke: rgba(20,184,166,0.20); stroke-width: 0.8; }
+.kenya-svg .county-prime { fill: rgba(212,175,55,0.22); stroke: rgba(212,175,55,0.40); stroke-width: 0.8; }
+.kenya-svg .county-peri { fill: rgba(212,175,55,0.12); stroke: rgba(212,175,55,0.25); stroke-width: 0.8; }
+.kenya-svg .county-rural { fill: rgba(236,91,19,0.08); stroke: rgba(236,91,19,0.20); stroke-width: 0.8; }
+.kenya-svg path:hover { fill: rgba(212,175,55,0.25) !important; stroke: var(--gold) !important; stroke-width: 1.5; }
+
+.map-pin {
+  position: absolute;
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 0;
+}
+.pin-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  position: relative;
+}
+.pin-dot::before {
+  content: ''; position: absolute; inset: -6px;
+  border-radius: 50%; opacity: 0.3;
+  animation: pin-pulse 2s infinite;
+}
+@keyframes pin-pulse {
+  0%,100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.8); opacity: 0; }
+}
+.pin-dot-gold { background: var(--gold); }
+.pin-dot-gold::before { background: var(--gold); }
+.pin-dot-teal { background: var(--teal); }
+.pin-dot-teal::before { background: var(--teal); }
+.pin-dot-orange { background: var(--orange); }
+.pin-dot-orange::before { background: var(--orange); }
+
+.pin-card {
+  background: rgba(10,15,30,0.90);
+  backdrop-filter: blur(12px);
+  border-radius: 8px; padding: 8px 12px;
+  margin-top: 4px; white-space: nowrap;
+}
+.pin-card-gold { border: 1px solid rgba(212,175,55,0.30); }
+.pin-card-teal { border: 1px solid rgba(20,184,166,0.30); }
+.pin-card-orange { border: 1px solid rgba(236,91,19,0.30); }
+.pin-county {
+  font-family: var(--font-mono); font-size: 9px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.pin-price { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: white; }
+.pin-segment { font-size: 9px; color: var(--text-tertiary); }
+
+.map-legend {
+  position: absolute; bottom: 16px; left: 16px;
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(10,15,30,0.80); backdrop-filter: blur(8px);
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  padding: 6px 14px;
+}
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend-label { font-size: 9px; color: var(--text-tertiary); letter-spacing: 0.5px; }
+
+/* Stats bar */
+.stats-bar {
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid rgba(212,175,55,0.10);
+  border-bottom: 1px solid rgba(212,175,55,0.10);
+  backdrop-filter: blur(8px);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  height: 100px;
+}
+.stat-item {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.stat-item:last-child { border-right: none; }
+.stat-number {
+  font-family: var(--font-mono); font-size: 42px; font-weight: 700;
+  color: var(--gold); line-height: 1;
+}
+.stat-label {
+  font-size: 11px; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 2px;
+}
+
+/* How it works */
+.hiw-section { padding: 96px 40px; }
+.hiw-eyebrow { font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 8px; }
+.hiw-title { font-family: var(--font-mono); font-size: 36px; font-weight: 700; margin-bottom: 48px; }
+.hiw-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.hiw-card {
+  padding: 36px; border-radius: 16px; position: relative; overflow: hidden;
+  cursor: default;
+}
+.hiw-card:hover { transform: translateY(-3px); }
+.hiw-num {
+  position: absolute; top: 16px; right: 20px;
+  font-family: var(--font-mono); font-size: 56px; font-weight: 700;
+  color: rgba(212,175,55,0.07); line-height: 1;
+  pointer-events: none;
+}
+.hiw-icon { color: var(--teal); margin-bottom: 48px; }
+.hiw-card-title { font-family: var(--font-mono); font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+.hiw-card-body { font-size: 15px; color: var(--text-secondary); line-height: 1.65; }
+
+/* ═══════════════════════════════════════════════
+   PAGE: ESTIMATOR
+   ═══════════════════════════════════════════════ */
+.estimator-layout {
+  display: grid; grid-template-columns: 440px 1fr;
+  gap: 32px; padding: 32px 40px 80px;
+  min-height: calc(100dvh - 116px);
+}
+.panel-header { margin-bottom: 24px; }
+.panel-eyebrow { font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 4px; }
+.panel-title { font-family: var(--font-mono); font-size: 24px; font-weight: 700; }
+
+/* Input fields */
+.field-group { margin-bottom: 24px; }
+.field-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.field-label i { color: var(--teal); }
+.custom-select {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.custom-select:hover { border-color: var(--border-hover); }
+.select-left { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 15px; }
+.custom-input {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; gap: 8px;
+  transition: border-color 0.2s;
+}
+.custom-input:focus-within { border-color: rgba(212,175,55,0.4); }
+.custom-input input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--text-primary); font-family: var(--font-mono); font-size: 15px;
+}
+.custom-input input::placeholder { color: var(--text-tertiary); font-style: italic; font-family: var(--font-sans); font-size: 13px; }
+.decoded { font-family: var(--font-mono); font-size: 10px; color: #64748B; margin-top: 4px; }
+
+.slider-group { margin-bottom: 24px; }
+.slider-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.slider-label { font-size: 13px; color: var(--text-secondary); }
+.slider-value { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--gold); }
+.slider-unit { font-size: 14px; color: var(--text-secondary); }
+input[type=range] {
+  width: 100%; height: 4px;
+  -webkit-appearance: none; appearance: none;
+  background: rgba(255,255,255,0.10);
+  border-radius: 2px; cursor: pointer; outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px rgba(212,175,55,0.5);
+  cursor: pointer;
+}
+.score-slider { margin-bottom: 16px; }
+.score-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.score-label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+.score-value-good { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #34D399; }
+.score-value-mid { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #FBBF24; }
+
+.field-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0; color: var(--text-tertiary);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+}
+.field-divider::before, .field-divider::after {
+  flex: 1; height: 1px; background: rgba(255,255,255,0.08); content: '';
+}
+
+/* Right panel */
+.result-price-card {
+  padding: 32px; position: relative; overflow: hidden; margin-bottom: 20px;
+}
+.result-price-card::after {
+  content: '';
+  position: absolute; top: -20px; right: -20px;
+  width: 120px; height: 96px;
+  background: url("data:image/svg+xml,%3Csvg width='120' height='96' viewBox='0 0 120 96' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='60' width='8' height='36' rx='2' fill='rgba(212,175,55,0.08)'/%3E%3Crect x='30' y='40' width='8' height='56' rx='2' fill='rgba(212,175,55,0.08)'/%3E%3Crect x='50' y='20' width='8' height='76' rx='2' fill='rgba(212,175,55,0.08)'/%3E%3Crect x='70' y='50' width='8' height='46' rx='2' fill='rgba(212,175,55,0.08)'/%3E%3Crect x='90' y='30' width='8' height='66' rx='2' fill='rgba(212,175,55,0.08)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.result-label { font-size: 13px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.result-price {
+  font-family: var(--font-mono); font-size: clamp(42px, 5vw, 60px); font-weight: 700;
+  color: white; display: flex; align-items: baseline; gap: 10px;
+}
+.result-price-unit { font-family: var(--font-sans); font-size: 20px; color: var(--text-secondary); }
+.result-total { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.result-total-label { font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.result-total-value { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--gold); }
+
+.confidence-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.conf-card { padding: 20px; }
+.conf-title { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.conf-range-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.10); border-radius: 3px; position: relative; margin-bottom: 8px; }
+.conf-range-fill { height: 100%; border-radius: 3px; background: var(--orange); position: absolute; }
+.conf-range-thumb {
+  width: 12px; height: 12px; border-radius: 50%; background: white;
+  border: 2px solid var(--orange); box-shadow: 0 0 8px rgba(236,91,19,0.8);
+  position: absolute; top: -3px; transform: translateX(-50%);
+}
+.conf-labels { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
+
+.model-row { margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.model-row.winner { border-left: 2px solid var(--gold); padding-left: 10px; }
+.model-name { font-size: 12px; color: var(--text-secondary); }
+.model-name.winner-name { color: var(--text-primary); }
+.model-price { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: white; }
+.model-price.winner-price { color: var(--gold); }
+
+.map-thumb { border-radius: 12px; overflow: hidden; height: 180px; position: relative; background: #0F172A; margin-top: 16px; }
+.map-thumb-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(10,15,30,0.90) 0%, transparent 100%);
+  padding: 16px;
+}
+.map-thumb-loc { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.map-thumb-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 700; color: #34D399; text-transform: uppercase; }
+
+/* ═══════════════════════════════════════════════
+   PAGE: DASHBOARD
+   ═══════════════════════════════════════════════ */
+.filter-bar {
+  position: sticky; top: 64px; z-index: 50;
+  background: rgba(10,15,30,0.95);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 0 40px;
+  display: flex; align-items: center; gap: 12px;
+  height: 52px; overflow: hidden;
+}
+.filter-label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+.filter-pills { display: flex; align-items: center; gap: 6px; flex: 1; overflow-x: auto; }
+.filter-pills::-webkit-scrollbar { display: none; }
+.pill { padding: 5px 14px; border-radius: var(--radius-pill); font-size: 11px; cursor: pointer; border: 1px solid var(--border); color: var(--text-secondary); transition: all 0.2s; white-space: nowrap; background: none; }
+.pill.active { background: rgba(212,175,55,0.15); border-color: var(--gold); color: var(--gold); font-family: var(--font-mono); font-weight: 700; }
+.pill:hover:not(.active) { border-color: rgba(255,255,255,0.20); }
+.filter-right { display: flex; align-items: center; gap: 12px; }
+.seg-pills { display: flex; gap: 4px; }
+.seg-pill { padding: 4px 12px; border-radius: var(--radius-pill); font-size: 11px; cursor: pointer; border: 1px solid transparent; color: var(--text-tertiary); transition: all 0.2s; background: none; white-space: nowrap; }
+.seg-pill.active { border-color: var(--gold); color: var(--gold); }
+.clear-btn { font-size: 12px; color: var(--text-tertiary); background: none; border: none; cursor: pointer; white-space: nowrap; }
+.clear-btn:hover { color: #ef4444; }
+
+.dashboard-body { padding: 32px 40px 80px; display: flex; flex-direction: column; gap: 48px; }
+
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.kpi-card { padding: 20px 24px; }
+.kpi-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.kpi-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(212,175,55,0.1); display: flex; align-items: center; justify-content: center; color: var(--gold); }
+.kpi-delta-teal { font-size: 11px; font-weight: 700; color: var(--teal); }
+.kpi-delta-live { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #34D399; }
+.kpi-value { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+.kpi-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.5px; }
+
+.chart-row { display: grid; gap: 24px; }
+.chart-row-2 { grid-template-columns: 1fr 1fr; }
+.chart-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+.chart-card { padding: 24px; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.chart-title-row { display: flex; align-items: center; gap: 8px; }
+.chart-title { font-family: var(--font-mono); font-size: 16px; font-weight: 700; }
+.chart-subtitle { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.chart-stat { font-family: var(--font-mono); font-size: 11px; text-align: right; }
+
+/* Chart SVG elements */
+.chart-area { width: 100%; }
+.axis-line { stroke: rgba(255,255,255,0.10); stroke-width: 1; }
+.grid-line { stroke: rgba(255,255,255,0.05); stroke-width: 1; }
+.axis-label { font-family: 'Space Mono', monospace; font-size: 9px; fill: #64748B; }
+.bar-gold { fill: url(#goldGrad); rx: 2; }
+.bar-teal { fill: url(#tealGrad); }
+.bar-orange { fill: url(#orangeGrad); }
+.scatter-prime { fill: rgba(212,175,55,0.9); }
+.scatter-peri { fill: rgba(20,184,166,0.8); }
+.scatter-rural { fill: rgba(236,91,19,0.7); }
+.trend-line { stroke: var(--orange); stroke-width: 1.5; fill: none; }
+
+/* Horizontal bar chart */
+.hbar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.hbar-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; width: 80px; flex-shrink: 0; }
+.hbar-track { flex: 1; height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; }
+.hbar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, rgba(212,175,55,0.4) 0%, #D4AF37 100%); transition: width 0.8s ease; }
+.hbar-value { font-family: var(--font-mono); font-size: 11px; color: var(--gold); width: 50px; text-align: right; flex-shrink: 0; }
+
+/* Leaderboard */
+.lb-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.lb-tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+.lb-tab { padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; cursor: pointer; border: none; background: none; color: var(--text-tertiary); transition: all 0.2s; }
+.lb-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); font-family: var(--font-mono); }
+.lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s; }
+.lb-row:hover { background: rgba(255,255,255,0.02); margin: 0 -8px; padding: 10px 8px; border-radius: 6px; }
+.lb-rank { width: 28px; flex-shrink: 0; text-align: center; }
+.rank-badge { width: 24px; height: 24px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: #0A0F1E; }
+.rank-num { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
+.lb-county { flex: 1; }
+.lb-county-name { font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); }
+.lb-sparkline { width: 60px; height: 20px; }
+.lb-price { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--gold); width: 60px; text-align: right; }
+.lb-score { font-family: var(--font-mono); font-size: 12px; font-weight: 700; width: 32px; text-align: center; }
+.score-high { color: #34D399; }
+.score-mid { color: #FBBF24; }
+.score-low { color: #ef4444; }
+.lb-trend { width: 20px; }
+.trend-up { color: #34D399; }
+.trend-down { color: var(--orange); }
+.lb-note { font-size: 10px; color: var(--text-tertiary); font-style: italic; margin-top: 12px; }
+
+/* Radar chart */
+.radar-county-selector { margin-bottom: 12px; }
+.radar-pill-select { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 6px 14px; font-size: 12px; color: var(--text-secondary); cursor: pointer; width: fit-content; }
+
+/* Map section */
+.map-section-card { overflow: hidden; }
+.map-controls-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+.map-type-tabs { display: flex; gap: 4px; }
+.map-tab { padding: 6px 14px; border-radius: var(--radius-pill); font-size: 11px; cursor: pointer; border: none; background: rgba(255,255,255,0.05); color: var(--text-secondary); transition: all 0.2s; }
+.map-tab.active { background: var(--gold); color: #0A0F1E; font-family: var(--font-mono); font-weight: 700; }
+.map-viz { height: 480px; background: #0F172A; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.map-legend-bar { position: absolute; bottom: 16px; right: 16px; background: rgba(10,15,30,0.85); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; width: 180px; }
+.map-legend-title { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.map-grad-bar { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--teal), var(--gold), var(--orange)); margin-bottom: 4px; }
+.map-grad-labels { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: var(--text-secondary); }
+.map-zoom-controls { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 4px; }
+.zoom-btn { width: 36px; height: 36px; background: rgba(10,15,30,0.80); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; }
+.zoom-btn:hover { border-color: var(--border-hover); color: var(--gold); }
+
+.active-county-panel { position: absolute; right: 16px; top: 16px; background: rgba(10,15,30,0.90); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: 200px; }
+.acp-name { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+.acp-price { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: white; margin-bottom: 8px; }
+.acp-sub { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+
+/* Detail cards */
+.detail-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.detail-card { padding: 20px 24px; }
+.detail-card-prime { border-left: 4px solid var(--gold) !important; }
+.detail-card-peri { border-left: 4px solid var(--teal) !important; }
+.detail-card-rural { border-left: 4px solid var(--orange) !important; }
+.detail-card-agri { border-left: 4px solid var(--text-secondary) !important; }
+.detail-segment { font-family: var(--font-mono); font-size: 12px; margin-bottom: 4px; }
+.detail-records { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: white; }
+.detail-median { font-size: 12px; color: var(--teal); }
+
+/* ═══════════════════════════════════════════════
+   PAGE: MAP
+   ═══════════════════════════════════════════════ */
+.map-page { position: relative; height: 100dvh; overflow: hidden; background: #0F172A; }
+.map-fullscreen { position: absolute; inset: 0; }
+.map-bg { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+.map-page-logo {
+  position: absolute; top: 20px; left: 20px; z-index: 10;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(10,15,30,0.80); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-pill);
+  padding: 10px 16px;
+}
+.map-top-bar {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(10,15,30,0.80); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-pill);
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px;
+}
+.map-view-toggle { display: flex; gap: 2px; }
+.mv-btn { padding: 7px 14px; border-radius: var(--radius-pill); font-size: 12px; cursor: pointer; border: none; background: none; color: var(--text-secondary); transition: all 0.2s; }
+.mv-btn.active { background: rgba(212,175,55,0.15); color: var(--gold); font-family: var(--font-mono); }
+.map-top-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.10); }
+.map-leg-pills { display: flex; align-items: center; gap: 10px; padding: 0 8px; }
+.map-leg-pill { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-secondary); }
+.map-leg-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+.map-left-controls {
+  position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(10,15,30,0.80); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 8px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.map-ctrl-btn { width: 40px; height: 40px; background: transparent; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; }
+.map-ctrl-btn:hover { background: rgba(255,255,255,0.08); color: var(--gold); }
+.map-ctrl-sep { height: 1px; background: rgba(255,255,255,0.08); }
+
+.predict-panel {
+  position: absolute; right: 24px; top: 80px; bottom: 24px;
+  width: 320px; z-index: 10;
+  background: rgba(10,15,30,0.93); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  overflow-y: auto; padding: 24px;
+  box-shadow: -4px 0 40px rgba(0,0,0,0.4);
+}
+.predict-panel::-webkit-scrollbar { width: 4px; }
+.predict-panel::-webkit-scrollbar-track { background: transparent; }
+.predict-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.pp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.pp-title { font-family: var(--font-mono); font-size: 18px; font-weight: 700; }
+.pp-sub { font-size: 12px; color: var(--text-tertiary); margin-bottom: 20px; }
+.pp-close { width: 24px; height: 24px; background: rgba(255,255,255,0.08); border: none; border-radius: 50%; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; }
+.pp-location { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+.pp-loc-label { font-size: 9px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+.pp-loc-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.pp-loc-coords { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+.pp-compact-slider { margin-bottom: 16px; }
+.pp-s-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.pp-s-label { font-size: 11px; color: var(--text-secondary); width: 80px; flex-shrink: 0; }
+.pp-s-val { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--gold); width: 24px; text-align: right; flex-shrink: 0; }
+.pp-result { background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.15); border-radius: 12px; padding: 20px; margin-top: 16px; }
+.pp-result-label { font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.pp-result-price { font-family: var(--font-mono); font-size: 30px; font-weight: 700; color: var(--gold); }
+
+/* Kenya map SVG for fullscreen */
+.map-kenya-svg { width: 60%; max-width: 600px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.85; }
+.map-kenya-svg path { stroke: rgba(20,184,166,0.25); stroke-width: 0.5; fill: rgba(10,15,30,0.6); transition: fill 0.2s; cursor: pointer; }
+.map-kenya-svg .selected-county { fill: rgba(212,175,55,0.25); stroke: var(--gold); stroke-width: 1.5; }
+
+/* ═══════════════════════════════════════════════
+   PAGE: MODEL
+   ═══════════════════════════════════════════════ */
+.model-page { padding: 48px 40px 80px; }
+.model-hero { margin-bottom: 48px; }
+.model-breadcrumb { font-size: 13px; color: var(--text-tertiary); margin-bottom: 8px; }
+.model-title { font-family: var(--font-mono); font-size: 36px; font-weight: 700; margin-bottom: 20px; }
+.model-desc { font-size: 16px; color: var(--text-secondary); line-height: 1.7; max-width: 680px; }
+
+.arch-card { padding: 48px; margin-bottom: 48px; position: relative; overflow: hidden; }
+.arch-flow { display: flex; align-items: center; gap: 0; overflow-x: auto; }
+.arch-flow::-webkit-scrollbar { height: 4px; }
+
+.arch-input-box {
+  border: 2px dashed rgba(212,175,55,0.5);
+  border-radius: 8px; padding: 16px 20px;
+  min-width: 160px; flex-shrink: 0;
+}
+.arch-input-title { font-family: var(--font-mono); font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.feature-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 3px 10px; font-size: 10px; color: var(--text-secondary); margin-bottom: 4px; display: block; }
+
+.arch-arrow { flex-shrink: 0; width: 32px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.20); }
+.arch-branches { display: flex; gap: 12px; flex-shrink: 0; }
+.arch-branch { padding: 16px; border-radius: 8px; min-width: 140px; }
+.arch-branch-mlp { border-left: 2px solid var(--gold); background: rgba(212,175,55,0.04); }
+.arch-branch-snn { border-left: 2px solid var(--teal); background: rgba(20,184,166,0.04); }
+.arch-branch-tab { border-left: 2px solid var(--orange); background: rgba(236,91,19,0.04); }
+.arch-branch-title { font-family: var(--font-mono); font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.arch-branch-sub { font-size: 10px; color: var(--text-secondary); margin-bottom: 12px; }
+.arch-layer { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px; font-size: 10px; color: var(--text-secondary); margin-bottom: 6px; text-align: center; }
+.arch-layer-arrow { text-align: center; font-size: 10px; color: var(--text-tertiary); margin-bottom: 4px; }
+
+.arch-meta-box {
+  background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.20);
+  border-radius: 12px; padding: 20px 24px; min-width: 140px; flex-shrink: 0;
+  box-shadow: 0 0 30px rgba(212,175,55,0.10);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.arch-meta-icon { color: var(--gold); }
+.arch-meta-title { font-family: var(--font-mono); font-size: 18px; font-weight: 700; }
+.arch-meta-sub { font-size: 11px; color: var(--text-secondary); }
+.arch-meta-metric { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+.arch-meta-r2 { font-family: var(--font-mono); font-size: 26px; font-weight: 700; color: var(--gold); }
+
+.metrics-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+.perf-table { width: 100%; border-collapse: collapse; }
+.perf-thead tr { background: rgba(255,255,255,0.04); }
+.perf-thead th { text-align: left; padding: 10px 14px; font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.perf-row td { padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
+.perf-row.winner-row { background: rgba(212,175,55,0.05); border-left: 2px solid var(--gold); }
+.perf-name { font-family: var(--font-mono); }
+.perf-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.perf-bar-track { width: 60px; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.perf-bar-fill { height: 100%; border-radius: 3px; }
+.perf-r2 { font-family: var(--font-mono); font-size: 12px; }
+
+.feat-row { margin-bottom: 16px; }
+.feat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.feat-name { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
+.feat-pct { font-family: var(--font-mono); font-size: 13px; font-weight: 700; }
+.feat-track { width: 100%; height: 14px; background: rgba(255,255,255,0.06); border-radius: 7px; overflow: hidden; }
+.feat-fill { height: 100%; border-radius: 7px; }
+
+.pipeline-section { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before { content: ''; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, var(--gold), rgba(212,175,55,0.2)); }
+.tl-node { position: relative; margin-bottom: 56px; }
+.tl-dot { position: absolute; left: -32px; top: 3px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #0A0F1E; z-index: 1; }
+.tl-dot-gold { background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.5); }
+.tl-dot-teal { background: var(--teal); box-shadow: 0 0 10px rgba(20,184,166,0.5); }
+.tl-dot-orange { background: var(--orange); box-shadow: 0 0 10px rgba(236,91,19,0.5); }
+.tl-dot-pulse { background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.5); animation: tl-pulse 2s infinite; }
+@keyframes tl-pulse { 0%,100% { box-shadow: 0 0 10px rgba(212,175,55,0.5); } 50% { box-shadow: 0 0 24px rgba(212,175,55,0.9); } }
+.tl-title { font-family: var(--font-mono); font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.tl-body { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+.lexicon-table { width: 100%; border-collapse: collapse; }
+.lex-thead tr { background: rgba(255,255,255,0.04); }
+.lex-thead th { text-align: left; padding: 10px 14px; font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.lex-row td { padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.lex-row:nth-child(even) td { background: rgba(255,255,255,0.01); }
+.lex-name { font-family: var(--font-mono); font-size: 13px; }
+.type-badge { padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.type-numeric { color: var(--teal); border: 1px solid rgba(20,184,166,0.30); background: rgba(20,184,166,0.08); }
+.type-ordinal { color: var(--gold); border: 1px solid rgba(212,175,55,0.30); background: rgba(212,175,55,0.08); }
+.type-boolean { color: var(--orange); border: 1px solid rgba(236,91,19,0.30); background: rgba(236,91,19,0.08); }
+
+.limit-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-bottom: 48px; }
+.limit-card { padding: 28px; }
+.limit-card-amber { border-left: 4px solid #FBBF24 !important; }
+.limit-card-teal { border-left: 4px solid var(--teal) !important; }
+.limit-card-orange { border-left: 4px solid var(--orange) !important; }
+.limit-icon { margin-bottom: 12px; }
+.limit-title { font-family: var(--font-mono); font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.limit-body { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .header { display: none; }
+  .taskbar { display: flex; }
+  .landing-hero { grid-template-columns: 1fr; padding: 24px 20px 100px; gap: 32px; }
+  .hero-left { padding-top: 16px; }
+  .hl-1, .hl-2 { font-size: 60px; }
+  .hl-3 { font-size: 44px; }
+  .map-container { order: -1; }
+  .kenya-map-wrap { max-width: 340px; }
+  .hiw-section { padding: 60px 20px; }
+  .hiw-grid { grid-template-columns: 1fr; }
+  .stats-bar { grid-template-columns: repeat(2,1fr); height: auto; }
+  .stat-item { padding: 20px 0; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .estimator-layout { grid-template-columns: 1fr; padding: 16px 20px 100px; }
+  .filter-bar { padding: 0 16px; }
+  .dashboard-body { padding: 20px 16px 100px; }
+  .kpi-row { grid-template-columns: repeat(2,1fr); }
+  .chart-row-2, .chart-row-3 { grid-template-columns: 1fr; }
+  .detail-cards { grid-template-columns: repeat(2,1fr); }
+  .footer { display: none; }
+  .model-page { padding: 24px 16px 100px; }
+  .metrics-row, .pipeline-section { grid-template-columns: 1fr; }
+  .limit-cards { grid-template-columns: 1fr; }
+  .arch-flow { flex-direction: column; gap: 12px; }
+  .arch-arrow { transform: rotate(90deg); }
+  .arch-branches { flex-direction: column; }
+  .confidence-row { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════ */
+.fade-in { animation: fadeIn 0.4s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in-1 { animation-delay: 0.05s; }
+.fade-in-2 { animation-delay: 0.12s; }
+.fade-in-3 { animation-delay: 0.20s; }
+.fade-in-4 { animation-delay: 0.28s; }
+.fade-in-5 { animation-delay: 0.36s; }
+
+/* Choropleth Kenya map placeholder */
+.choropleth-kenya {
+  width: 70%; max-width: 400px;
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ GLOBAL BACKGROUND ═══ -->
+<div class="bg-patches" aria-hidden="true">
+  <div class="patch patch-gold-tr"></div>
+  <div class="patch patch-gold-cl"></div>
+  <div class="patch patch-gold-bc"></div>
+  <div class="patch patch-teal" id="teal-patch" style="top:20%;left:-100px"></div>
+</div>
+<div class="dot-grid" aria-hidden="true"></div>
+
+<!-- ═══ APP ═══ -->
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header" id="main-header">
+    <div class="logo" onclick="navigate('landing')">
+      <div class="logo-mark"></div>
+      <span class="logo-text">THAMANI <span>AI</span></span>
+    </div>
+    <nav class="nav-pill-wrap">
+      <button class="nav-item active" onclick="navigate('landing')" data-page="landing">Home</button>
+      <button class="nav-item" onclick="navigate('estimator')" data-page="estimator">Estimator</button>
+      <button class="nav-item" onclick="navigate('dashboard')" data-page="dashboard">Dashboard</button>
+      <button class="nav-item" onclick="navigate('map')" data-page="map">Map</button>
+      <button class="nav-item" onclick="navigate('model')" data-page="model">Model</button>
+    </nav>
+    <div class="header-right">
+      <a href="https://github.com/uchih-a/kenya-land-valuation-project" target="_blank">
+        <i data-lucide="github" style="width:16px;height:16px"></i> GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- BOTTOM TASKBAR (mobile) -->
+  <nav class="taskbar" id="taskbar">
+    <button class="tab-btn active" onclick="navigate('landing')" data-page="landing">
+      <i data-lucide="home" style="width:22px;height:22px"></i>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="tab-btn" onclick="navigate('estimator')" data-page="estimator">
+      <i data-lucide="calculator" style="width:22px;height:22px"></i>
+      <span class="tab-label">Estimate</span>
+    </button>
+    <button class="tab-btn" onclick="navigate('dashboard')" data-page="dashboard">
+      <i data-lucide="bar-chart-2" style="width:22px;height:22px"></i>
+      <span class="tab-label">Dashboard</span>
+    </button>
+    <button class="tab-btn" onclick="navigate('map')" data-page="map">
+      <i data-lucide="map" style="width:22px;height:22px"></i>
+      <span class="tab-label">Map</span>
+    </button>
+    <button class="tab-btn" onclick="navigate('model')" data-page="model">
+      <i data-lucide="brain-circuit" style="width:22px;height:22px"></i>
+      <span class="tab-label">Model</span>
+    </button>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       PAGE: LANDING
+  ══════════════════════════════════════ -->
+  <div class="page active" id="page-landing">
+
+    <!-- Hero -->
+    <section class="landing-hero">
+      <div class="hero-left">
+        <div class="eyebrow-line fade-in">
+          <div class="eyebrow-rule"></div>
+          <span class="eyebrow-text">Kenya · Real Estate Intelligence</span>
+          <div class="eyebrow-rule"></div>
+        </div>
+        <div class="headline fade-in fade-in-1">
+          <span class="hl-1">LAND</span>
+          <span class="hl-2">VALUATION</span>
+          <span class="hl-3">INTELLIGENCE</span>
+        </div>
+        <p class="hero-sub fade-in fade-in-2">
+          Precision land estimation for all 47 Kenya counties using MLP, SNN and TabNet ensemble neural networks.
+        </p>
+        <div class="cta-row fade-in fade-in-3">
+          <button class="btn-primary" onclick="navigate('estimator')">
+            START ESTIMATING
+            <i data-lucide="arrow-right" style="width:18px;height:18px"></i>
+          </button>
+          <button class="btn-secondary" onclick="navigate('dashboard')">
+            VIEW ANALYSIS
+          </button>
+        </div>
+        <p class="trust-line fade-in fade-in-4">No account required · 813 properties · Free to use</p>
+      </div>
+
+      <!-- Kenya Map -->
+      <div class="map-container fade-in fade-in-2">
+        <div class="kenya-map-wrap">
+          <svg class="kenya-svg" viewBox="0 0 500 560" xmlns="http://www.w3.org/2000/svg" id="hero-map">
+            <defs>
+              <radialGradient id="mapGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(20,184,166,0.08)"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </radialGradient>
+            </defs>
+            <!-- Simplified Kenya county polygons (representative shapes) -->
+            <!-- Nairobi region - prime -->
+            <path class="county-prime" d="M255 310 L275 295 L295 308 L290 330 L268 340 L250 328 Z" data-county="Nairobi" data-price="KSh 120M"/>
+            <!-- Kiambu - prime -->
+            <path class="county-prime" d="M240 270 L275 255 L310 270 L305 295 L275 295 L255 310 L240 295 Z" data-county="Kiambu" data-price="KSh 35M"/>
+            <!-- Mombasa - prime -->
+            <path class="county-peri" d="M360 440 L380 430 L395 445 L385 465 L365 468 L350 455 Z" data-county="Mombasa" data-price="KSh 45M"/>
+            <!-- Kisumu - peri -->
+            <path class="county-peri" d="M160 290 L185 275 L205 288 L200 312 L178 320 L158 308 Z" data-county="Kisumu" data-price="KSh 12M"/>
+            <!-- Nakuru -->
+            <path class="county-default" d="M200 230 L240 215 L270 228 L265 260 L240 270 L205 258 Z" data-county="Nakuru" data-price="KSh 22M"/>
+            <!-- Machakos -->
+            <path class="county-default" d="M290 330 L330 318 L355 338 L348 368 L312 375 L288 360 Z" data-county="Machakos" data-price="KSh 18M"/>
+            <!-- Kajiado -->
+            <path class="county-default" d="M268 340 L290 330 L315 345 L312 375 L288 395 L260 390 L248 368 Z" data-county="Kajiado" data-price="KSh 28M"/>
+            <!-- Nyeri -->
+            <path class="county-default" d="M270 175 L305 162 L330 178 L325 210 L295 218 L265 205 Z" data-county="Nyeri" data-price="KSh 8M"/>
+            <!-- Kisii -->
+            <path class="county-default" d="M155 325 L178 320 L200 335 L194 358 L168 365 L148 350 Z" data-county="Kisii" data-price="KSh 5M"/>
+            <!-- Turkana (large northern) -->
+            <path class="county-rural" d="M130 30 L220 15 L290 30 L310 80 L285 130 L240 140 L180 125 L120 90 Z" data-county="Turkana" data-price="KSh 0.8M"/>
+            <!-- Marsabit -->
+            <path class="county-rural" d="M290 30 L380 25 L420 55 L415 110 L370 125 L310 115 L285 80 Z" data-county="Marsabit" data-price="KSh 0.5M"/>
+            <!-- Garissa -->
+            <path class="county-rural" d="M360 175 L420 160 L460 180 L465 240 L420 255 L365 245 L340 215 Z" data-county="Garissa" data-price="KSh 1.2M"/>
+            <!-- Wajir -->
+            <path class="county-rural" d="M370 80 L430 70 L470 90 L475 150 L460 180 L420 160 L380 130 L370 105 Z" data-county="Wajir" data-price="KSh 0.6M"/>
+            <!-- Isiolo -->
+            <path class="county-default" d="M295 120 L345 110 L370 130 L365 175 L340 190 L305 178 L285 155 Z" data-county="Isiolo" data-price="KSh 2M"/>
+            <!-- Meru -->
+            <path class="county-default" d="M305 100 L345 90 L370 110 L365 145 L330 155 L295 140 L290 115 Z" data-county="Meru" data-price="KSh 4M"/>
+            <!-- Embu -->
+            <path class="county-default" d="M310 155 L345 145 L365 165 L360 195 L330 200 L305 185 Z" data-county="Embu" data-price="KSh 5M"/>
+            <!-- Tharaka-Nithi -->
+            <path class="county-default" d="M330 130 L360 120 L375 140 L368 168 L340 175 L320 158 Z" data-county="Tharaka-Nithi" data-price="KSh 3M"/>
+            <!-- Kitui -->
+            <path class="county-default" d="M320 210 L360 200 L390 218 L388 265 L355 272 L315 260 L300 235 Z" data-county="Kitui" data-price="KSh 3.5M"/>
+            <!-- Makueni -->
+            <path class="county-default" d="M290 275 L330 265 L360 280 L355 320 L320 330 L285 318 Z" data-county="Makueni" data-price="KSh 4M"/>
+            <!-- Kwale -->
+            <path class="county-default" d="M320 385 L360 375 L390 395 L388 435 L355 445 L315 432 Z" data-county="Kwale" data-price="KSh 6M"/>
+            <!-- Kilifi -->
+            <path class="county-peri" d="M350 345 L390 335 L415 355 L412 400 L375 408 L345 395 Z" data-county="Kilifi" data-price="KSh 10M"/>
+            <!-- Taita-Taveta -->
+            <path class="county-default" d="M310 390 L340 382 L362 400 L358 432 L325 440 L305 425 Z" data-county="Taita-Taveta" data-price="KSh 3M"/>
+            <!-- Trans Nzoia -->
+            <path class="county-default" d="M155 175 L195 162 L218 178 L215 210 L185 218 L152 205 Z" data-county="Trans Nzoia" data-price="KSh 5M"/>
+            <!-- Uasin Gishu -->
+            <path class="county-default" d="M168 205 L205 195 L228 210 L225 240 L195 248 L165 235 Z" data-county="Uasin Gishu" data-price="KSh 7M"/>
+            <!-- Elgeyo Marakwet -->
+            <path class="county-default" d="M188 165 L220 155 L240 170 L238 202 L210 210 L185 195 Z" data-county="Elgeyo Marakwet" data-price="KSh 4M"/>
+            <!-- Nandi -->
+            <path class="county-default" d="M185 218 L220 208 L240 225 L235 255 L205 262 L180 248 Z" data-county="Nandi" data-price="KSh 5M"/>
+            <!-- Baringo -->
+            <path class="county-default" d="M210 140 L255 128 L278 145 L272 182 L240 192 L205 178 Z" data-county="Baringo" data-price="KSh 3M"/>
+            <!-- Laikipia -->
+            <path class="county-default" d="M248 120 L292 108 L310 125 L305 162 L270 172 L242 155 Z" data-county="Laikipia" data-price="KSh 6M"/>
+            <!-- Samburu -->
+            <path class="county-default" d="M238 70 L295 58 L320 80 L318 118 L285 128 L238 115 Z" data-county="Samburu" data-price="KSh 2M"/>
+            <!-- West Pokot -->
+            <path class="county-default" d="M138 90 L185 75 L210 95 L208 135 L175 145 L132 128 Z" data-county="West Pokot" data-price="KSh 2.5M"/>
+            <!-- Kakamega -->
+            <path class="county-peri" d="M138 245 L170 235 L192 248 L188 278 L158 285 L132 270 Z" data-county="Kakamega" data-price="KSh 8M"/>
+            <!-- Bungoma -->
+            <path class="county-default" d="M128 215 L165 205 L188 220 L185 250 L152 258 L122 242 Z" data-county="Bungoma" data-price="KSh 7M"/>
+            <!-- Vihiga -->
+            <path class="county-default" d="M150 265 L178 256 L198 268 L195 292 L168 298 L145 285 Z" data-county="Vihiga" data-price="KSh 6M"/>
+            <!-- Siaya -->
+            <path class="county-default" d="M128 280 L158 270 L178 284 L172 312 L142 318 L122 302 Z" data-county="Siaya" data-price="KSh 5M"/>
+            <!-- Homa Bay -->
+            <path class="county-default" d="M138 318 L168 308 L190 322 L185 350 L155 358 L130 342 Z" data-county="Homa Bay" data-price="KSh 4M"/>
+            <!-- Migori -->
+            <path class="county-default" d="M148 350 L178 340 L200 355 L195 382 L165 390 L140 375 Z" data-county="Migori" data-price="KSh 4M"/>
+            <!-- Bomet -->
+            <path class="county-default" d="M175 322 L205 312 L225 328 L220 355 L192 362 L168 345 Z" data-county="Bomet" data-price="KSh 5M"/>
+            <!-- Kericho -->
+            <path class="county-default" d="M182 290 L215 280 L235 295 L230 325 L200 332 L175 318 Z" data-county="Kericho" data-price="KSh 7M"/>
+            <!-- Narok -->
+            <path class="county-default" d="M195 345 L235 335 L262 352 L258 392 L225 400 L188 382 Z" data-county="Narok" data-price="KSh 5M"/>
+            <!-- Murang'a -->
+            <path class="county-prime" d="M255 220 L290 210 L310 225 L305 255 L270 262 L248 245 Z" data-county="Murang'a" data-price="KSh 18M"/>
+            <!-- Kirinyaga -->
+            <path class="county-default" d="M282 178 L318 168 L335 185 L330 212 L295 220 L272 205 Z" data-county="Kirinyaga" data-price="KSh 10M"/>
+            <!-- Nyandarua -->
+            <path class="county-default" d="M228 175 L268 162 L285 178 L280 210 L248 218 L222 202 Z" data-county="Nyandarua" data-price="KSh 6M"/>
+            <!-- Tana River -->
+            <path class="county-rural" d="M360 270 L410 255 L440 278 L438 340 L395 348 L352 335 Z" data-county="Tana River" data-price="KSh 1.5M"/>
+            <!-- Lamu -->
+            <path class="county-default" d="M418 360 L450 350 L468 368 L465 400 L432 408 L410 392 Z" data-county="Lamu" data-price="KSh 8M"/>
+            <!-- Mandera -->
+            <path class="county-rural" d="M378 28 L440 22 L480 42 L482 78 L448 88 L400 72 Z" data-county="Mandera" data-price="KSh 0.4M"/>
+          </svg>
+
+          <!-- Price pins -->
+          <div class="map-pin" style="position:absolute;top:52%;right:8%">
+            <div class="pin-dot pin-dot-gold"></div>
+            <div class="pin-card pin-card-gold">
+              <div class="pin-county" style="color:var(--gold)">NAIROBI</div>
+              <div class="pin-price">KSh 120M</div>
+              <div class="pin-segment">Prime Urban</div>
+            </div>
+          </div>
+          <div class="map-pin" style="position:absolute;bottom:14%;right:22%">
+            <div class="pin-dot pin-dot-teal"></div>
+            <div class="pin-card pin-card-teal">
+              <div class="pin-county" style="color:var(--teal)">MOMBASA</div>
+              <div class="pin-price">KSh 45M</div>
+              <div class="pin-segment">Peri-Urban</div>
+            </div>
+          </div>
+          <div class="map-pin" style="position:absolute;top:50%;left:5%">
+            <div class="pin-dot pin-dot-orange"></div>
+            <div class="pin-card pin-card-orange">
+              <div class="pin-county" style="color:var(--orange)">KISUMU</div>
+              <div class="pin-price">KSh 12M</div>
+              <div class="pin-segment">Mid-Market</div>
+            </div>
+          </div>
+
+          <div class="map-legend">
+            <div class="legend-dot" style="background:var(--gold)"></div><span class="legend-label">Prime</span>
+            <div class="legend-dot" style="background:var(--teal)"></div><span class="legend-label">Peri</span>
+            <div class="legend-dot" style="background:var(--orange)"></div><span class="legend-label">Rural</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-number" id="cnt-813">0</div><div class="stat-label">Properties Analysed</div></div>
+      <div class="stat-item"><div class="stat-number" id="cnt-47">0</div><div class="stat-label">Counties Covered</div></div>
+      <div class="stat-item"><div class="stat-number" id="cnt-61">0%</div><div class="stat-label">Model R² Score</div></div>
+      <div class="stat-item"><div class="stat-number" id="cnt-3">0</div><div class="stat-label">AI Models</div></div>
+    </div>
+
+    <!-- How It Works -->
+    <section class="hiw-section">
+      <div class="hiw-eyebrow">Our Process</div>
+      <div class="hiw-title">Seamless Valuation</div>
+      <div class="hiw-grid">
+        <div class="hiw-card card fade-in fade-in-1">
+          <div class="hiw-num">01</div>
+          <div class="hiw-icon"><i data-lucide="map-pin" style="width:32px;height:32px"></i></div>
+          <div class="hiw-card-title">Location Entry</div>
+          <p class="hiw-card-body">Input your county or drop a pin using a Google Plus Code on our interactive Kenya map.</p>
+        </div>
+        <div class="hiw-card card fade-in fade-in-2">
+          <div class="hiw-num">02</div>
+          <div class="hiw-icon"><i data-lucide="brain-circuit" style="width:32px;height:32px"></i></div>
+          <div class="hiw-card-title">AI Processing</div>
+          <p class="hiw-card-body">Our MLP, SNN and TabNet ensemble cross-references proximity, elevation, and market data in milliseconds.</p>
+        </div>
+        <div class="hiw-card card fade-in fade-in-3">
+          <div class="hiw-num">03</div>
+          <div class="hiw-icon"><i data-lucide="file-text" style="width:32px;height:32px"></i></div>
+          <div class="hiw-card-title">Instant Report</div>
+          <p class="hiw-card-body">Receive a price estimate with 80% confidence intervals, segment classification and model agreement breakdown.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <a href="https://github.com/uchih-a/kenya-land-valuation-project" target="_blank" class="footer-left">
+        <i data-lucide="github" style="width:16px;height:16px"></i>
+        github.com/uchih-a/kenya-land-valuation-project
+      </a>
+      <div class="footer-right">
+        <span class="status-online"><span class="status-dot"></span>ONLINE</span>
+        <span class="footer-sep">·</span>
+        <span>~142ms</span>
+        <span class="footer-sep">·</span>
+        <span>99.2% uptime</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE: ESTIMATOR
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-estimator">
+    <div class="estimator-layout">
+      <!-- Left: Inputs -->
+      <div>
+        <div class="panel-header">
+          <div class="panel-eyebrow">Property Details</div>
+          <div class="panel-title">Valuation Inputs</div>
+        </div>
+        <div class="card" style="padding:24px">
+          <!-- County -->
+          <div class="field-group">
+            <div class="field-label"><i data-lucide="map-pin" style="width:14px;height:14px;color:var(--teal)"></i> County</div>
+            <div class="custom-select">
+              <div class="select-left">🇰🇪 <span>Nairobi City</span></div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="badge badge-orange" style="font-size:9px;padding:2px 8px">0KM FROM CBD</span>
+                <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--text-tertiary)"></i>
+              </div>
+            </div>
+          </div>
+          <!-- Plus Code -->
+          <div class="field-group">
+            <div class="field-label"><i data-lucide="qr-code" style="width:14px;height:14px;color:var(--teal)"></i> Google Plus Code <span style="font-size:11px;color:var(--text-tertiary);margin-left:4px">optional</span></div>
+            <div class="custom-input">
+              <input type="text" value="6GCRR5M9+R4" id="plus-code-input">
+              <i data-lucide="check-circle-2" style="width:16px;height:16px;color:var(--teal)"></i>
+            </div>
+            <div class="decoded">-1.286389, 36.817223 (Decoded)</div>
+          </div>
+          <!-- Plot Size -->
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">Plot Size</span>
+              <span><span class="slider-value" id="plot-size-val">12.5</span> <span class="slider-unit">Ac</span></span>
+            </div>
+            <input type="range" min="0.1" max="100" value="12.5" step="0.1" oninput="document.getElementById('plot-size-val').textContent=parseFloat(this.value).toFixed(1)">
+            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px">
+              <span>0.1 Ac</span><span>100 Ac</span>
+            </div>
+          </div>
+
+          <div class="field-divider">Locality Scores</div>
+
+          <!-- Scores -->
+          <div class="score-slider">
+            <div class="score-header">
+              <div class="score-label"><i data-lucide="building-2" style="width:12px;height:12px;color:var(--teal)"></i> Amenities</div>
+              <span class="score-value-good" id="amenities-val">85/100</span>
+            </div>
+            <input type="range" min="0" max="100" value="85" oninput="updateScore('amenities-val',this.value)">
+          </div>
+          <div class="score-slider">
+            <div class="score-header">
+              <div class="score-label"><i data-lucide="route" style="width:12px;height:12px;color:var(--teal)"></i> Road Accessibility</div>
+              <span class="score-value-mid" id="road-val">42/100</span>
+            </div>
+            <input type="range" min="0" max="100" value="42" oninput="updateScore('road-val',this.value)">
+          </div>
+          <div class="score-slider" style="margin-bottom:24px">
+            <div class="score-header">
+              <div class="score-label"><i data-lucide="zap" style="width:12px;height:12px;color:var(--teal)"></i> Infrastructure</div>
+              <span class="score-value-good" id="infra-val">92/100</span>
+            </div>
+            <input type="range" min="0" max="100" value="92" oninput="updateScore('infra-val',this.value)">
+          </div>
+          <button class="btn-primary" style="width:100%;justify-content:center;border-radius:12px;height:58px" onclick="runEstimate()">
+            <i data-lucide="zap" style="width:18px;height:18px"></i>
+            RUN AI ESTIMATION
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Results -->
+      <div>
+        <div class="panel-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="panel-eyebrow" style="font-family:var(--font-sans)">AI Output</div>
+            <div class="panel-title">Valuation Result</div>
+          </div>
+          <span class="badge badge-gold">● PRIME URBAN</span>
+        </div>
+
+        <!-- Main price card -->
+        <div class="card card-glow result-price-card" style="box-shadow:0 0 40px rgba(212,175,55,0.08)">
+          <div class="result-label">Estimated Market Price</div>
+          <div class="result-price">
+            KSh <span id="est-price">45.2M</span>
+            <span class="result-price-unit">/ acre</span>
+          </div>
+          <div class="result-total">
+            <div class="result-total-label">Total Valuation (12.5 Ac)</div>
+            <div class="result-total-value">KSh 565,000,000</div>
+          </div>
+        </div>
+
+        <!-- Confidence + Model Agreement -->
+        <div class="confidence-row">
+          <div class="card conf-card">
+            <div class="conf-title">Confidence Interval (80%)</div>
+            <div class="conf-range-bar">
+              <div class="conf-range-fill" style="left:25%;right:25%"></div>
+              <div class="conf-range-thumb" style="left:50%"></div>
+            </div>
+            <div class="conf-labels"><span>42.1M</span><span>48.9M</span></div>
+            <p style="font-size:10px;color:var(--text-tertiary);font-style:italic;margin-top:8px;text-align:center">"High confidence — 14 recent nearby sales"</p>
+          </div>
+          <div class="card conf-card">
+            <div class="conf-title">Model Agreement</div>
+            <div class="model-row winner">
+              <span class="model-name winner-name" style="font-size:11px">Thamani Ensemble</span>
+              <span class="model-price winner-price">45.2M</span>
+            </div>
+            <div class="model-row">
+              <span class="model-name" style="font-size:11px">MLP Neural Net</span>
+              <span class="model-price">44.8M</span>
+            </div>
+            <div class="model-row">
+              <span class="model-name" style="font-size:11px">TabNet Attention</span>
+              <span class="model-price">45.5M</span>
+            </div>
+            <div class="model-row" style="border:none">
+              <span class="model-name" style="font-size:11px">SNN Regularized</span>
+              <span class="model-price">45.1M</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map thumbnail -->
+        <div class="map-thumb">
+          <svg width="100%" height="180" viewBox="0 0 600 180">
+            <rect width="600" height="180" fill="#0F172A"/>
+            <g opacity="0.5">
+              <rect x="0" y="0" width="600" height="180" fill="url(#mapPattern)"/>
+            </g>
+            <line x1="0" y1="90" x2="600" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="300" y1="0" x2="300" y2="180" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <circle cx="300" cy="90" r="8" fill="var(--gold)"/>
+            <circle cx="300" cy="90" r="20" fill="none" stroke="rgba(212,175,55,0.3)" stroke-width="1.5"/>
+            <circle cx="300" cy="90" r="35" fill="none" stroke="rgba(212,175,55,0.15)" stroke-width="1"/>
+          </svg>
+          <div class="map-thumb-overlay">
+            <div class="map-thumb-loc">Westlands, Nairobi</div>
+            <div class="map-thumb-badge">
+              <i data-lucide="check-circle" style="width:10px;height:10px"></i>
+              Plus Code ✓
+            </div>
+            <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">Valuation Area: 500m radius</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <a href="https://github.com/uchih-a/kenya-land-valuation-project" target="_blank" class="footer-left">
+        <i data-lucide="github" style="width:16px;height:16px"></i>
+        github.com/uchih-a/kenya-land-valuation-project
+      </a>
+      <div class="footer-right">
+        <span class="status-online"><span class="status-dot"></span>ONLINE</span>
+        <span class="footer-sep">·</span><span>~142ms</span>
+        <span class="footer-sep">·</span><span>99.2% uptime</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE: DASHBOARD
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-dashboard">
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="filter-label"><i data-lucide="filter" style="width:14px;height:14px"></i> Filter</div>
+      <div class="filter-pills">
+        <button class="pill active" onclick="filterCounty(this,'all')">All Counties</button>
+        <button class="pill" onclick="filterCounty(this,'nairobi')">Nairobi</button>
+        <button class="pill" onclick="filterCounty(this,'kiambu')">Kiambu</button>
+        <button class="pill" onclick="filterCounty(this,'mombasa')">Mombasa</button>
+        <button class="pill" onclick="filterCounty(this,'nakuru')">Nakuru</button>
+        <button class="pill" onclick="filterCounty(this,'kisumu')">Kisumu</button>
+        <button class="pill" onclick="filterCounty(this,'machakos')">Machakos</button>
+        <button class="pill" style="color:var(--teal);border-color:rgba(20,184,166,0.3)">+ 41 more ▾</button>
+      </div>
+      <div class="filter-right">
+        <div class="seg-pills">
+          <button class="seg-pill active">All Segments</button>
+          <button class="seg-pill">Prime</button>
+          <button class="seg-pill">Peri-Urban</button>
+          <button class="seg-pill">Rural</button>
+        </div>
+        <button class="clear-btn" onclick="clearFilters()">↺ Clear All</button>
+      </div>
+    </div>
+
+    <div class="dashboard-body">
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="card kpi-card card-glow">
+          <div class="kpi-top">
+            <div class="kpi-icon"><i data-lucide="trending-up" style="width:18px;height:18px"></i></div>
+            <span class="kpi-delta-teal">+2.4% ↑</span>
+          </div>
+          <div class="kpi-value">KSh 73M</div>
+          <div class="kpi-label">National Mean / Acre</div>
+        </div>
+        <div class="card kpi-card card-glow">
+          <div class="kpi-top">
+            <div class="kpi-icon"><i data-lucide="bar-chart-2" style="width:18px;height:18px"></i></div>
+            <span class="kpi-delta-teal">+1.8% ↑</span>
+          </div>
+          <div class="kpi-value">KSh 23M</div>
+          <div class="kpi-label">National Median / Acre</div>
+        </div>
+        <div class="card kpi-card card-glow">
+          <div class="kpi-top">
+            <div class="kpi-icon" style="background:rgba(20,184,166,0.10);"><i data-lucide="database" style="width:18px;height:18px;color:var(--teal)"></i></div>
+            <span class="kpi-delta-live"><span class="status-dot" style="width:5px;height:5px"></span>LIVE</span>
+          </div>
+          <div class="kpi-value">813</div>
+          <div class="kpi-label">Records Analysed</div>
+        </div>
+        <div class="card kpi-card card-glow">
+          <div class="kpi-top">
+            <div class="kpi-icon"><i data-lucide="map" style="width:18px;height:18px"></i></div>
+            <span style="font-size:10px;color:var(--text-tertiary)">100% COVERAGE</span>
+          </div>
+          <div class="kpi-value">47</div>
+          <div class="kpi-label">Counties Covered</div>
+        </div>
+      </div>
+
+      <!-- Section 1 -->
+      <div>
+        <div class="section-header">
+          <div class="section-eyebrow">Section 01</div>
+          <div class="section-title">Investment Intelligence</div>
+          <div class="section-insight">Nairobi land trades at 47× the price of Turkana per acre — but affordability gaps signal opportunity</div>
+        </div>
+        <div class="chart-row chart-row-2">
+          <!-- Leaderboard -->
+          <div class="card chart-card">
+            <div class="lb-header">
+              <div>
+                <div class="chart-title-row"><i data-lucide="trophy" style="width:18px;height:18px;color:var(--gold)"></i><span class="chart-title" style="margin-left:8px">Investment Leaderboard</span></div>
+                <div class="chart-subtitle">Ranked by price-to-opportunity composite score</div>
+              </div>
+            </div>
+            <div class="lb-tabs">
+              <button class="lb-tab active">🏆 Best Value</button>
+              <button class="lb-tab">📈 Highest Price</button>
+              <button class="lb-tab">📉 Lowest Price</button>
+            </div>
+            <div id="leaderboard">
+              <!-- rows injected by JS -->
+            </div>
+            <p class="lb-note">Score = (Affordability × 40%) + (Growth × 35%) + (Infrastructure × 25%)</p>
+          </div>
+          <!-- County bars -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title-row"><i data-lucide="bar-chart-2" style="width:18px;height:18px;color:var(--teal)"></i><span class="chart-title" style="margin-left:8px">Price by County (Top 10)</span></div>
+              </div>
+            </div>
+            <div id="county-bars"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div>
+        <div class="section-header">
+          <div class="section-eyebrow">Section 02</div>
+          <div class="section-title">Proximity Effects</div>
+          <div class="section-insight">Every 10km from Nairobi CBD reduces land value by ~KSh 12M/acre — Mombasa shows a steeper coastal gradient</div>
+        </div>
+        <div class="chart-row chart-row-2">
+          <!-- Scatter plot -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title-row"><i data-lucide="navigation-2" style="width:18px;height:18px;color:var(--teal)"></i><span class="chart-title" style="margin-left:8px">Nairobi Distance Effect</span></div>
+                <div class="chart-subtitle">Price correlation with CBD proximity</div>
+              </div>
+              <div class="chart-stat">
+                <div style="color:var(--teal)">R² = 0.842</div>
+                <div style="color:var(--orange);font-size:10px">Slope: −1.24M/10km</div>
+              </div>
+            </div>
+            <svg class="chart-area" height="220" viewBox="0 0 400 220">
+              <defs>
+                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="rgba(212,175,55,0.4)"/>
+                  <stop offset="100%" stop-color="#D4AF37"/>
+                </linearGradient>
+              </defs>
+              <!-- axes -->
+              <line x1="40" y1="10" x2="40" y2="190" class="axis-line"/>
+              <line x1="40" y1="190" x2="390" y2="190" class="axis-line"/>
+              <!-- grid -->
+              <line x1="40" y1="60" x2="390" y2="60" class="grid-line" stroke-dasharray="3,3"/>
+              <line x1="40" y1="120" x2="390" y2="120" class="grid-line" stroke-dasharray="3,3"/>
+              <!-- confidence band -->
+              <path d="M60 20 L150 80 L250 130 L370 170 L370 185 L250 150 L150 100 L60 40 Z" fill="rgba(236,91,19,0.06)"/>
+              <!-- regression line -->
+              <line x1="60" y1="25" x2="370" y2="178" class="trend-line"/>
+              <!-- prime dots -->
+              <circle cx="70" cy="22" r="7" class="scatter-prime"/><circle cx="95" cy="35" r="7" class="scatter-prime"/>
+              <circle cx="120" cy="55" r="7" class="scatter-prime"/><circle cx="80" cy="45" r="6" class="scatter-prime"/>
+              <!-- peri dots -->
+              <circle cx="160" cy="88" r="6" class="scatter-peri"/><circle cx="200" cy="102" r="6" class="scatter-peri"/>
+              <circle cx="178" cy="115" r="6" class="scatter-peri"/><circle cx="220" cy="125" r="6" class="scatter-peri"/>
+              <!-- rural dots -->
+              <circle cx="270" cy="140" r="5" class="scatter-rural"/><circle cx="310" cy="152" r="5" class="scatter-rural"/>
+              <circle cx="350" cy="162" r="5" class="scatter-rural"/><circle cx="290" cy="158" r="5" class="scatter-rural"/>
+              <!-- axis labels -->
+              <text x="40" y="210" class="axis-label">CBD</text>
+              <text x="130" y="210" class="axis-label">50km</text>
+              <text x="230" y="210" class="axis-label">100km</text>
+              <text x="330" y="210" class="axis-label">200km+</text>
+              <!-- legend -->
+              <circle cx="60" cy="210" r="4" class="scatter-prime"/><text x="68" y="213" class="axis-label">Prime</text>
+              <circle cx="110" cy="210" r="4" class="scatter-peri"/><text x="118" y="213" class="axis-label">Peri</text>
+              <circle cx="155" cy="210" r="4" class="scatter-rural"/><text x="163" y="213" class="axis-label">Rural</text>
+            </svg>
+          </div>
+          <!-- Dual line chart -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title-row"><i data-lucide="route" style="width:18px;height:18px;color:var(--gold)"></i><span class="chart-title" style="margin-left:8px">Distance Band Analysis</span></div>
+                <div class="chart-subtitle">Nairobi vs Mombasa price decay</div>
+              </div>
+            </div>
+            <svg class="chart-area" height="220" viewBox="0 0 400 220">
+              <defs>
+                <linearGradient id="nrbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="rgba(212,175,55,0.15)"/>
+                  <stop offset="100%" stop-color="transparent"/>
+                </linearGradient>
+                <linearGradient id="mbaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="rgba(20,184,166,0.15)"/>
+                  <stop offset="100%" stop-color="transparent"/>
+                </linearGradient>
+              </defs>
+              <line x1="40" y1="10" x2="40" y2="180" class="axis-line"/>
+              <line x1="40" y1="180" x2="380" y2="180" class="axis-line"/>
+              <line x1="40" y1="60" x2="380" y2="60" class="grid-line" stroke-dasharray="3,3"/>
+              <line x1="40" y1="120" x2="380" y2="120" class="grid-line" stroke-dasharray="3,3"/>
+              <!-- Nairobi area -->
+              <path d="M60 20 C110 45 170 90 250 130 C310 158 360 168 380 172 L380 180 L60 180 Z" fill="url(#nrbGrad)"/>
+              <!-- Mombasa area -->
+              <path d="M60 65 C110 78 170 108 250 138 C310 160 360 170 380 174 L380 180 L60 180 Z" fill="url(#mbaGrad)"/>
+              <!-- Nairobi line -->
+              <path d="M60 20 C110 45 170 90 250 130 C310 158 360 168 380 172" stroke="var(--gold)" stroke-width="2" fill="none"/>
+              <!-- Mombasa line -->
+              <path d="M60 65 C110 78 170 108 250 138 C310 160 360 170 380 174" stroke="var(--teal)" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+              <!-- Nairobi dots -->
+              <circle cx="60" cy="20" r="5" fill="var(--gold)"/>
+              <circle cx="150" cy="68" r="5" fill="var(--gold)"/>
+              <circle cx="230" cy="118" r="5" fill="var(--gold)"/>
+              <circle cx="310" cy="155" r="5" fill="var(--gold)"/>
+              <circle cx="380" cy="172" r="5" fill="var(--gold)"/>
+              <!-- Mombasa dots -->
+              <circle cx="60" cy="65" r="5" fill="var(--teal)"/>
+              <circle cx="150" cy="95" r="5" fill="var(--teal)"/>
+              <circle cx="230" cy="130" r="5" fill="var(--teal)"/>
+              <circle cx="310" cy="158" r="5" fill="var(--teal)"/>
+              <circle cx="380" cy="174" r="5" fill="var(--teal)"/>
+              <!-- Crossover annotation -->
+              <line x1="250" y1="10" x2="250" y2="175" stroke="rgba(255,255,255,0.10)" stroke-dasharray="3,3"/>
+              <text x="245" y="12" class="axis-label">~45km</text>
+              <!-- x labels -->
+              <text x="45" y="198" class="axis-label">0–10km</text>
+              <text x="115" y="198" class="axis-label">10–30km</text>
+              <text x="200" y="198" class="axis-label">30–60km</text>
+              <text x="285" y="198" class="axis-label">60–100km</text>
+              <text x="360" y="198" class="axis-label">100km+</text>
+              <!-- legend -->
+              <line x1="50" y1="213" x2="70" y2="213" stroke="var(--gold)" stroke-width="2"/>
+              <text x="74" y="216" class="axis-label">Nairobi</text>
+              <line x1="120" y1="213" x2="140" y2="213" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4,2"/>
+              <text x="144" y="216" class="axis-label">Mombasa</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div>
+        <div class="section-header">
+          <div class="section-eyebrow">Section 03</div>
+          <div class="section-title">Attribute Analysis</div>
+          <div class="section-insight">Infrastructure score is the strongest predictor — amenity access adds premium only above score 70</div>
+        </div>
+        <div class="chart-row chart-row-3">
+          <!-- Radar -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title-row"><i data-lucide="activity" style="width:18px;height:18px;color:var(--teal)"></i><span class="chart-title" style="margin-left:8px">County Score Profile</span></div>
+              </div>
+            </div>
+            <div class="radar-county-selector">
+              <div class="radar-pill-select">Nairobi <i data-lucide="chevron-down" style="width:12px;height:12px"></i></div>
+            </div>
+            <svg width="100%" viewBox="0 0 240 220">
+              <!-- Radar grid hexagons -->
+              <g transform="translate(120,110)">
+                <!-- 33% -->
+                <polygon points="0,-42 36,-21 36,21 0,42 -36,21 -36,-21" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                <!-- 66% -->
+                <polygon points="0,-84 72,-42 72,42 0,84 -72,42 -72,-42" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                <!-- 100% -->
+                <polygon points="0,-106 91,-53 91,53 0,106 -91,53 -91,-53" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <!-- Axes -->
+                <line x1="0" y1="-106" x2="0" y2="106" stroke="rgba(255,255,255,0.06)"/>
+                <line x1="-91" y1="-53" x2="91" y2="53" stroke="rgba(255,255,255,0.06)"/>
+                <line x1="-91" y1="53" x2="91" y2="-53" stroke="rgba(255,255,255,0.06)"/>
+                <!-- Nairobi polygon (85, 42, 92) -->
+                <polygon points="0,-90 39,22 -81,47" fill="rgba(212,175,55,0.20)" stroke="var(--gold)" stroke-width="1.5"/>
+                <!-- Kisumu polygon (55, 68, 48) -->
+                <polygon points="0,-58 62,-34 -43,44" fill="rgba(20,184,166,0.12)" stroke="var(--teal)" stroke-width="1.5" stroke-dasharray="4,2"/>
+                <!-- Data dots Nairobi -->
+                <circle cx="0" cy="-90" r="5" fill="var(--gold)"/>
+                <circle cx="39" cy="22" r="5" fill="var(--gold)"/>
+                <circle cx="-81" cy="47" r="5" fill="var(--gold)"/>
+                <!-- Data dots Kisumu -->
+                <circle cx="0" cy="-58" r="4" fill="var(--teal)"/>
+                <circle cx="62" cy="-34" r="4" fill="var(--teal)"/>
+                <circle cx="-43" cy="44" r="4" fill="var(--teal)"/>
+                <!-- Axis labels -->
+                <text x="-12" y="-112" font-family="DM Sans" font-size="10" fill="#94A3B8">Amenities</text>
+                <text x="96" y="58" font-family="DM Sans" font-size="10" fill="#94A3B8">Road</text>
+                <text x="-108" y="62" font-family="DM Sans" font-size="10" fill="#94A3B8">Infra</text>
+              </g>
+              <!-- Legend -->
+              <line x1="20" y1="210" x2="40" y2="210" stroke="var(--gold)" stroke-width="2"/>
+              <text x="44" y="213" font-family="DM Sans" font-size="9" fill="#94A3B8">Nairobi</text>
+              <line x1="100" y1="210" x2="120" y2="210" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4,2"/>
+              <text x="124" y="213" font-family="DM Sans" font-size="9" fill="#94A3B8">Kisumu</text>
+            </svg>
+          </div>
+          <!-- Score correlations -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title-row"><i data-lucide="zap" style="width:18px;height:18px;color:var(--orange)"></i><span class="chart-title" style="margin-left:8px">Score Correlations</span></div>
+              </div>
+            </div>
+            <svg class="chart-area" height="240" viewBox="0 0 300 240">
+              <!-- Amenities -->
+              <text x="0" y="12" class="axis-label" font-size="10" fill="#D4AF37">Amenities vs Price  r=0.73</text>
+              <g>
+                <line x1="0" y1="65" x2="280" y2="65" class="axis-line" opacity="0.5"/>
+                <line x1="10" y1="20" x2="270" y2="62" stroke="var(--gold)" stroke-width="1" fill="none"/>
+                <circle cx="20" cy="58" r="3" fill="rgba(212,175,55,0.7)"/><circle cx="45" cy="50" r="3" fill="rgba(212,175,55,0.7)"/>
+                <circle cx="80" cy="42" r="3" fill="rgba(212,175,55,0.7)"/><circle cx="110" cy="38" r="3" fill="rgba(212,175,55,0.7)"/>
+                <circle cx="145" cy="32" r="3" fill="rgba(212,175,55,0.7)"/><circle cx="185" cy="28" r="3" fill="rgba(212,175,55,0.7)"/>
+                <circle cx="220" cy="24" r="3" fill="rgba(212,175,55,0.7)"/><circle cx="260" cy="22" r="3" fill="rgba(212,175,55,0.7)"/>
+              </g>
+              <!-- Accessibility -->
+              <text x="0" y="90" class="axis-label" font-size="10" fill="var(--teal)">Accessibility vs Price  r=0.61</text>
+              <g>
+                <line x1="0" y1="140" x2="280" y2="140" class="axis-line" opacity="0.5"/>
+                <line x1="10" y1="110" x2="270" y2="136" stroke="var(--teal)" stroke-width="1"/>
+                <circle cx="20" cy="136" r="3" fill="rgba(20,184,166,0.7)"/><circle cx="55" cy="128" r="3" fill="rgba(20,184,166,0.7)"/>
+                <circle cx="90" cy="120" r="3" fill="rgba(20,184,166,0.7)"/><circle cx="130" cy="116" r="3" fill="rgba(20,184,166,0.7)"/>
+                <circle cx="175" cy="112" r="3" fill="rgba(20,184,166,0.7)"/><circle cx="225" cy="110" r="3" fill="rgba(20,184,166,0.7)"/>
+              </g>
+              <!-- Infrastructure -->
+              <text x="0" y="165" class="axis-label" font-size="10" fill="var(--orange)">Infrastructure vs Price  r=0.84</text>
+              <g>
+                <line x1="0" y1="215" x2="280" y2="215" class="axis-line" opacity="0.5"/>
+                <line x1="10" y1="185" x2="270" y2="210" stroke="var(--orange)" stroke-width="1.5"/>
+                <circle cx="20" cy="210" r="3" fill="rgba(236,91,19,0.7)"/><circle cx="50" cy="200" r="3" fill="rgba(236,91,19,0.7)"/>
+                <circle cx="90" cy="192" r="3" fill="rgba(236,91,19,0.7)"/><circle cx="130" cy="188" r="3" fill="rgba(236,91,19,0.7)"/>
+                <circle cx="175" cy="186" r="3" fill="rgba(236,91,19,0.7)"/><circle cx="220" cy="188" r="3" fill="rgba(236,91,19,0.7)"/>
+                <circle cx="255" cy="186" r="3" fill="rgba(236,91,19,0.7)"/>
+              </g>
+            </svg>
+          </div>
+          <!-- Grouped score bars -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title-row"><i data-lucide="layers" style="width:18px;height:18px;color:var(--gold)"></i><span class="chart-title" style="margin-left:8px">Scores Across Counties</span></div>
+              </div>
+            </div>
+            <div id="grouped-bars"></div>
+            <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-secondary)"><div style="width:10px;height:10px;border-radius:2px;background:var(--gold)"></div>Amenities</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-secondary)"><div style="width:10px;height:10px;border-radius:2px;background:var(--teal)"></div>Accessibility</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-secondary)"><div style="width:10px;height:10px;border-radius:2px;background:var(--orange)"></div>Infrastructure</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Map Analysis -->
+      <div>
+        <div class="section-header">
+          <div class="section-eyebrow">Section 04</div>
+          <div class="section-title">Spatial Analysis</div>
+          <div class="section-insight">Price concentrations follow transport corridors — SGR line drives the Nairobi-Mombasa gradient</div>
+        </div>
+        <div class="card map-section-card">
+          <div class="map-controls-bar">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+                <i data-lucide="globe" style="width:20px;height:20px;color:var(--gold)"></i>
+                <span style="font-family:var(--font-mono);font-size:18px;font-weight:700">Spatial Analysis</span>
+              </div>
+              <div style="font-size:12px;color:var(--text-secondary)">813 data points · 47 counties · March 2024</div>
+            </div>
+            <div class="map-type-tabs">
+              <button class="map-tab active" onclick="switchMapTab(this,'choropleth')">🗺 Choropleth</button>
+              <button class="map-tab" onclick="switchMapTab(this,'heatmap')">🔥 Heatmap</button>
+              <button class="map-tab" onclick="switchMapTab(this,'distribution')">📍 Distribution</button>
+              <button class="map-tab" onclick="switchMapTab(this,'idw')">〰 IDW Gradient</button>
+            </div>
+          </div>
+          <div class="map-viz" id="map-viz">
+            <!-- Choropleth default -->
+            <svg class="choropleth-kenya" viewBox="0 0 500 560" id="dashboard-map">
+              <!-- reuse same county paths with choropleth fills -->
+              <path d="M255 310 L275 295 L295 308 L290 330 L268 340 L250 328 Z" fill="rgba(212,175,55,0.80)" stroke="rgba(255,255,255,0.15)" stroke-width="0.8" data-county="Nairobi"/>
+              <path d="M240 270 L275 255 L310 270 L305 295 L275 295 L255 310 L240 295 Z" fill="rgba(212,175,55,0.55)" stroke="rgba(255,255,255,0.15)" stroke-width="0.8" data-county="Kiambu"/>
+              <path d="M360 440 L380 430 L395 445 L385 465 L365 468 L350 455 Z" fill="rgba(212,175,55,0.55)" stroke="rgba(255,255,255,0.15)" stroke-width="0.8" data-county="Mombasa"/>
+              <path d="M160 290 L185 275 L205 288 L200 312 L178 320 L158 308 Z" fill="rgba(212,175,55,0.30)" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" data-county="Kisumu"/>
+              <path d="M200 230 L240 215 L270 228 L265 260 L240 270 L205 258 Z" fill="rgba(212,175,55,0.28)" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" data-county="Nakuru"/>
+              <path d="M290 330 L330 318 L355 338 L348 368 L312 375 L288 360 Z" fill="rgba(212,175,55,0.22)" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" data-county="Machakos"/>
+              <path d="M268 340 L290 330 L315 345 L312 375 L288 395 L260 390 L248 368 Z" fill="rgba(212,175,55,0.25)" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" data-county="Kajiado"/>
+              <path d="M130 30 L220 15 L290 30 L310 80 L285 130 L240 140 L180 125 L120 90 Z" fill="rgba(20,184,166,0.08)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Turkana"/>
+              <path d="M290 30 L380 25 L420 55 L415 110 L370 125 L310 115 L285 80 Z" fill="rgba(20,184,166,0.07)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Marsabit"/>
+              <path d="M360 175 L420 160 L460 180 L465 240 L420 255 L365 245 L340 215 Z" fill="rgba(20,184,166,0.09)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Garissa"/>
+              <path d="M370 80 L430 70 L470 90 L475 150 L460 180 L420 160 L380 130 L370 105 Z" fill="rgba(20,184,166,0.07)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Wajir"/>
+              <path d="M295 120 L345 110 L370 130 L365 175 L340 190 L305 178 L285 155 Z" fill="rgba(20,184,166,0.12)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Isiolo"/>
+              <path d="M305 100 L345 90 L370 110 L365 145 L330 155 L295 140 L290 115 Z" fill="rgba(20,184,166,0.15)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Meru"/>
+              <path d="M310 155 L345 145 L365 165 L360 195 L330 200 L305 185 Z" fill="rgba(20,184,166,0.14)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Embu"/>
+              <path d="M320 210 L360 200 L390 218 L388 265 L355 272 L315 260 L300 235 Z" fill="rgba(20,184,166,0.13)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Kitui"/>
+              <path d="M290 275 L330 265 L360 280 L355 320 L320 330 L285 318 Z" fill="rgba(20,184,166,0.14)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Makueni"/>
+              <path d="M350 345 L390 335 L415 355 L412 400 L375 408 L345 395 Z" fill="rgba(212,175,55,0.22)" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" data-county="Kilifi"/>
+              <path d="M248 120 L292 108 L310 125 L305 162 L270 172 L242 155 Z" fill="rgba(20,184,166,0.16)" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" data-county="Laikipia"/>
+              <path d="M138 245 L170 235 L192 248 L188 278 L158 285 L132 270 Z" fill="rgba(212,175,55,0.20)" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" data-county="Kakamega"/>
+              <path d="M255 220 L290 210 L310 225 L305 255 L270 262 L248 245 Z" fill="rgba(212,175,55,0.32)" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" data-county="Murang'a"/>
+              <text x="260" y="320" font-family="Space Mono" font-size="8" fill="rgba(212,175,55,0.6)" text-anchor="middle">NAIROBI</text>
+              <text x="278" y="280" font-family="Space Mono" font-size="7" fill="rgba(212,175,55,0.5)" text-anchor="middle">KIAMBU</text>
+              <text x="370" y="452" font-family="Space Mono" font-size="7" fill="rgba(212,175,55,0.5)" text-anchor="middle">MOMBASA</text>
+              <text x="182" y="300" font-family="Space Mono" font-size="7" fill="rgba(212,175,55,0.4)" text-anchor="middle">KISUMU</text>
+            </svg>
+            <!-- Map controls -->
+            <div class="map-zoom-controls">
+              <button class="zoom-btn"><i data-lucide="zoom-in" style="width:14px;height:14px"></i></button>
+              <button class="zoom-btn"><i data-lucide="zoom-out" style="width:14px;height:14px"></i></button>
+              <button class="zoom-btn"><i data-lucide="crosshair" style="width:16px;height:16px"></i></button>
+            </div>
+            <!-- Legend -->
+            <div class="map-legend-bar">
+              <div class="map-legend-title">Price Tier (KSH)</div>
+              <div class="map-grad-bar"></div>
+              <div class="map-grad-labels"><span>&lt; 1M</span><span>50M</span><span>&gt; 200M</span></div>
+            </div>
+            <!-- Active county panel -->
+            <div class="active-county-panel">
+              <div class="acp-name">Nairobi City</div>
+              <div class="acp-price">KSh 14,240,000</div>
+              <div class="acp-sub">Prime Commercial</div>
+              <div style="margin-top:8px">
+                <div class="badge badge-gold" style="font-size:9px">PRIME URBAN</div>
+              </div>
+              <div style="margin-top:10px;font-size:11px;color:var(--text-secondary)">
+                <div style="margin-bottom:3px">Westlands: 32.1M</div>
+                <div style="margin-bottom:3px">Karen: 18.2M</div>
+                <div>Kiambu Rd: 25.3M</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Cards -->
+      <div>
+        <div class="detail-cards">
+          <div class="card detail-card detail-card-prime">
+            <div class="detail-segment" style="color:var(--gold)">Prime Urban</div>
+            <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:10px">SEGMENT A</div>
+            <div class="detail-records">142</div>
+            <div style="font-size:10px;color:var(--text-tertiary)">Records</div>
+            <div class="detail-median" style="margin-top:6px">Median: KSh 120M</div>
+          </div>
+          <div class="card detail-card detail-card-peri">
+            <div class="detail-segment" style="color:var(--teal)">Peri-Urban</div>
+            <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:10px">SEGMENT B</div>
+            <div class="detail-records">285</div>
+            <div style="font-size:10px;color:var(--text-tertiary)">Records</div>
+            <div class="detail-median" style="margin-top:6px;color:var(--teal)">Median: KSh 45M</div>
+          </div>
+          <div class="card detail-card detail-card-rural">
+            <div class="detail-segment" style="color:var(--orange)">Mid-Market Rural</div>
+            <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:10px">SEGMENT C</div>
+            <div class="detail-records">214</div>
+            <div style="font-size:10px;color:var(--text-tertiary)">Records</div>
+            <div class="detail-median" style="margin-top:6px;color:var(--orange)">Median: KSh 12M</div>
+          </div>
+          <div class="card detail-card detail-card-agri">
+            <div class="detail-segment" style="color:var(--text-secondary)">Agricultural</div>
+            <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:10px">SEGMENT D</div>
+            <div class="detail-records">172</div>
+            <div style="font-size:10px;color:var(--text-tertiary)">Records</div>
+            <div class="detail-median" style="margin-top:6px;color:var(--text-secondary)">Median: KSh 2.5M</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <a href="https://github.com/uchih-a/kenya-land-valuation-project" target="_blank" class="footer-left">
+        <i data-lucide="github" style="width:16px;height:16px"></i>
+        github.com/uchih-a/kenya-land-valuation-project
+      </a>
+      <div class="footer-right">
+        <span class="status-online"><span class="status-dot"></span>ONLINE</span>
+        <span class="footer-sep">·</span><span>~142ms</span>
+        <span class="footer-sep">·</span><span>99.2% uptime</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE: MAP
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-map">
+    <div class="map-page">
+      <!-- Dark background with grid -->
+      <div style="position:absolute;inset:0;background:#0A0F1E">
+        <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(20,184,166,0.08) 1px,transparent 1px);background-size:40px 40px;opacity:0.5"></div>
+        <!-- Gold glow at Nairobi -->
+        <div style="position:absolute;width:400px;height:400px;top:40%;left:48%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(212,175,55,0.15) 0%,transparent 70%);filter:blur(30px);pointer-events:none"></div>
+      </div>
+
+      <!-- Full map SVG -->
+      <svg style="position:absolute;width:65%;max-width:680px;top:50%;left:44%;transform:translate(-50%,-50%);z-index:2" viewBox="0 0 500 560" id="fullmap">
+        <path d="M255 310 L275 295 L295 308 L290 330 L268 340 L250 328 Z" fill="rgba(212,175,55,0.20)" stroke="rgba(212,175,55,0.50)" stroke-width="1.5" data-c="Nairobi"/>
+        <path d="M240 270 L275 255 L310 270 L305 295 L275 295 L255 310 L240 295 Z" fill="rgba(20,184,166,0.10)" stroke="rgba(20,184,166,0.30)" stroke-width="0.8" data-c="Kiambu"/>
+        <path d="M360 440 L380 430 L395 445 L385 465 L365 468 L350 455 Z" fill="rgba(20,184,166,0.10)" stroke="rgba(20,184,166,0.25)" stroke-width="0.8" data-c="Mombasa"/>
+        <path d="M160 290 L185 275 L205 288 L200 312 L178 320 L158 308 Z" fill="rgba(20,184,166,0.08)" stroke="rgba(20,184,166,0.20)" stroke-width="0.8" data-c="Kisumu"/>
+        <path d="M130 30 L220 15 L290 30 L310 80 L285 130 L240 140 L180 125 L120 90 Z" fill="rgba(10,15,30,0.6)" stroke="rgba(20,184,166,0.15)" stroke-width="0.6" data-c="Turkana"/>
+        <path d="M290 30 L380 25 L420 55 L415 110 L370 125 L310 115 L285 80 Z" fill="rgba(10,15,30,0.6)" stroke="rgba(20,184,166,0.15)" stroke-width="0.6" data-c="Marsabit"/>
+        <path d="M370 80 L430 70 L470 90 L475 150 L460 180 L420 160 L380 130 L370 105 Z" fill="rgba(10,15,30,0.6)" stroke="rgba(20,184,166,0.12)" stroke-width="0.6" data-c="Wajir"/>
+        <path d="M360 175 L420 160 L460 180 L465 240 L420 255 L365 245 L340 215 Z" fill="rgba(10,15,30,0.6)" stroke="rgba(20,184,166,0.12)" stroke-width="0.6" data-c="Garissa"/>
+        <path d="M200 230 L240 215 L270 228 L265 260 L240 270 L205 258 Z" fill="rgba(20,184,166,0.08)" stroke="rgba(20,184,166,0.20)" stroke-width="0.7" data-c="Nakuru"/>
+        <path d="M290 330 L330 318 L355 338 L348 368 L312 375 L288 360 Z" fill="rgba(20,184,166,0.08)" stroke="rgba(20,184,166,0.18)" stroke-width="0.7" data-c="Machakos"/>
+        <path d="M268 340 L290 330 L315 345 L312 375 L288 395 L260 390 L248 368 Z" fill="rgba(20,184,166,0.08)" stroke="rgba(20,184,166,0.18)" stroke-width="0.7" data-c="Kajiado"/>
+        <path d="M270 175 L305 162 L330 178 L325 210 L295 218 L265 205 Z" fill="rgba(20,184,166,0.07)" stroke="rgba(20,184,166,0.15)" stroke-width="0.7" data-c="Nyeri"/>
+        <path d="M255 220 L290 210 L310 225 L305 255 L270 262 L248 245 Z" fill="rgba(20,184,166,0.09)" stroke="rgba(20,184,166,0.18)" stroke-width="0.7" data-c="Murang'a"/>
+        <path d="M282 178 L318 168 L335 185 L330 212 L295 220 L272 205 Z" fill="rgba(20,184,166,0.07)" stroke="rgba(20,184,166,0.15)" stroke-width="0.7" data-c="Kirinyaga"/>
+        <path d="M305 100 L345 90 L370 110 L365 145 L330 155 L295 140 L290 115 Z" fill="rgba(10,15,30,0.6)" stroke="rgba(20,184,166,0.12)" stroke-width="0.6" data-c="Meru"/>
+        <path d="M248 120 L292 108 L310 125 L305 162 L270 172 L242 155 Z" fill="rgba(20,184,166,0.07)" stroke="rgba(20,184,166,0.15)" stroke-width="0.7" data-c="Laikipia"/>
+        <path d="M350 345 L390 335 L415 355 L412 400 L375 408 L345 395 Z" fill="rgba(20,184,166,0.08)" stroke="rgba(20,184,166,0.18)" stroke-width="0.7" data-c="Kilifi"/>
+        <!-- Pulsing dot at Nairobi -->
+        <circle cx="270" cy="318" r="6" fill="var(--gold)">
+          <animate attributeName="r" values="5;10;5" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="270" cy="318" r="4" fill="var(--gold)"/>
+        <!-- Mombasa dot -->
+        <circle cx="370" cy="450" r="4" fill="var(--teal)">
+          <animate attributeName="r" values="4;8;4" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.3;1" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="370" cy="450" r="3" fill="var(--teal)"/>
+        <!-- Kisumu dot -->
+        <circle cx="180" cy="298" r="4" fill="var(--orange)">
+          <animate attributeName="r" values="4;8;4" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="180" cy="298" r="3" fill="var(--orange)"/>
+        <text x="260" y="340" font-family="Space Mono" font-size="8" fill="rgba(212,175,55,0.7)" text-anchor="middle">NAIROBI</text>
+        <text x="370" y="472" font-family="Space Mono" font-size="7" fill="rgba(20,184,166,0.7)" text-anchor="middle">MOMBASA</text>
+        <text x="180" y="316" font-family="Space Mono" font-size="7" fill="rgba(236,91,19,0.7)" text-anchor="middle">KISUMU</text>
+      </svg>
+
+      <!-- Logo pill -->
+      <div class="map-page-logo" style="z-index:10">
+        <div class="logo-mark" style="width:10px;height:10px"></div>
+        <span class="logo-text" style="font-size:14px">THAMANI <span>AI</span></span>
+      </div>
+
+      <!-- Top bar -->
+      <div class="map-top-bar">
+        <div class="map-view-toggle">
+          <button class="mv-btn active">Counties</button>
+          <button class="mv-btn">Heatmap</button>
+          <button class="mv-btn">Satellite</button>
+        </div>
+        <div class="map-top-sep"></div>
+        <div class="map-leg-pills">
+          <div class="map-leg-pill"><div class="map-leg-dot" style="background:var(--gold)"></div>Prime</div>
+          <div class="map-leg-pill"><div class="map-leg-dot" style="background:var(--teal)"></div>Peri</div>
+          <div class="map-leg-pill"><div class="map-leg-dot" style="background:var(--orange)"></div>Rural</div>
+        </div>
+      </div>
+
+      <!-- Left controls -->
+      <div class="map-left-controls" style="z-index:10">
+        <button class="map-ctrl-btn"><i data-lucide="zoom-in" style="width:14px;height:14px"></i></button>
+        <button class="map-ctrl-btn"><i data-lucide="zoom-out" style="width:14px;height:14px"></i></button>
+        <div class="map-ctrl-sep"></div>
+        <button class="map-ctrl-btn"><i data-lucide="crosshair" style="width:16px;height:16px;color:var(--teal)"></i></button>
+        <button class="map-ctrl-btn"><i data-lucide="layers" style="width:14px;height:14px"></i></button>
+      </div>
+
+      <!-- Predict panel -->
+      <div class="predict-panel" id="predict-panel">
+        <div class="pp-header">
+          <div>
+            <div class="pp-title">Predict Price</div>
+          </div>
+          <button class="pp-close"><i data-lucide="x" style="width:12px;height:12px"></i></button>
+        </div>
+        <div class="pp-sub">Real-time valuation based on AI ensemble</div>
+
+        <div class="pp-location">
+          <div class="pp-loc-label">Selected Location</div>
+          <div class="pp-loc-name">Westlands, Nairobi</div>
+          <div class="pp-loc-coords">-1.2644, 36.8045</div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label" style="font-size:12px">Plot Size (Acres)</div>
+          <div class="custom-input">
+            <input type="number" value="0.5" style="font-family:var(--font-mono);color:var(--gold);font-size:18px">
+            <span style="font-size:13px;color:var(--text-secondary)">Ac</span>
+          </div>
+        </div>
+
+        <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Locality Scores</div>
+        <div class="pp-compact-slider">
+          <div class="pp-s-row">
+            <span class="pp-s-label">Amenities</span>
+            <input type="range" min="0" max="10" value="7" style="flex:1" oninput="this.nextElementSibling.textContent=this.value">
+            <span class="pp-s-val">7</span>
+          </div>
+          <div class="pp-s-row">
+            <span class="pp-s-label">Road Access</span>
+            <input type="range" min="0" max="10" value="5" style="flex:1" oninput="this.nextElementSibling.textContent=this.value">
+            <span class="pp-s-val">5</span>
+          </div>
+          <div class="pp-s-row">
+            <span class="pp-s-label">Infrastructure</span>
+            <input type="range" min="0" max="10" value="9" style="flex:1" oninput="this.nextElementSibling.textContent=this.value">
+            <span class="pp-s-val">9</span>
+          </div>
+        </div>
+
+        <button class="btn-gold" onclick="mapPredict()">
+          <i data-lucide="zap" style="width:16px;height:16px"></i>
+          PREDICT PRICE
+        </button>
+
+        <div class="pp-result" id="pp-result" style="display:none">
+          <div class="pp-result-label">Estimated Price</div>
+          <div class="pp-result-price">KSh 45.2M/ac</div>
+          <div style="margin-top:8px">
+            <div class="badge badge-gold" style="font-size:9px">● PRIME URBAN</div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button style="flex:1;padding:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;font-size:10px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+              <i data-lucide="copy" style="width:11px;height:11px"></i> Copy
+            </button>
+            <button style="flex:1;padding:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;font-size:10px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+              <i data-lucide="download" style="width:11px;height:11px"></i> Export
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price pins on map -->
+      <div style="position:absolute;top:38%;right:28%;z-index:5;pointer-events:none">
+        <div style="width:1px;height:24px;background:rgba(212,175,55,0.4);margin-left:8px"></div>
+        <div class="pin-card pin-card-gold" style="padding:6px 10px">
+          <div class="pin-county" style="color:var(--gold)">NAIROBI</div>
+          <div class="pin-price" style="font-size:14px">KSh 120M</div>
+        </div>
+      </div>
+      <div style="position:absolute;bottom:22%;right:18%;z-index:5;pointer-events:none">
+        <div style="width:1px;height:20px;background:rgba(20,184,166,0.4);margin-left:8px"></div>
+        <div class="pin-card pin-card-teal" style="padding:6px 10px">
+          <div class="pin-county" style="color:var(--teal)">MOMBASA</div>
+          <div class="pin-price" style="font-size:14px">KSh 45M</div>
+        </div>
+      </div>
+      <div style="position:absolute;top:50%;left:12%;z-index:5;pointer-events:none">
+        <div style="width:1px;height:20px;background:rgba(236,91,19,0.4);margin-left:8px"></div>
+        <div class="pin-card pin-card-orange" style="padding:6px 10px">
+          <div class="pin-county" style="color:var(--orange)">KISUMU</div>
+          <div class="pin-price" style="font-size:14px">KSh 12M</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE: MODEL
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-model">
+    <div class="model-page">
+      <div class="model-hero">
+        <div class="model-breadcrumb">Technical Specification v2.4</div>
+        <div class="model-title">Model Architecture</div>
+        <p class="model-desc">The Thamani ensemble combines three complementary neural architectures: a standard MLP for non-linear feature interactions, a Self-Normalizing Network (SNN) for stable deep representations, and a TabNet attention model for interpretable feature selection. Predictions are fused via a Ridge meta-learner.</p>
+      </div>
+
+      <!-- Architecture Diagram -->
+      <div class="card arch-card card-glow" style="margin-bottom:48px">
+        <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:2px;margin-bottom:20px">Model Architecture</div>
+        <div class="arch-flow" style="align-items:stretch">
+          <!-- Input -->
+          <div class="arch-input-box" style="align-self:center">
+            <div class="arch-input-title">Input Features</div>
+            <span class="feature-chip">distance_to_road</span>
+            <span class="feature-chip">county_id</span>
+            <span class="feature-chip">is_commercial</span>
+            <span class="feature-chip">elevation_m</span>
+            <span class="feature-chip">amenity_score</span>
+            <span class="feature-chip">road_score</span>
+            <span class="feature-chip">infra_score</span>
+            <span class="feature-chip">plot_size_acres</span>
+          </div>
+          <div class="arch-arrow"><i data-lucide="arrow-right" style="width:20px;height:20px"></i></div>
+          <!-- Branches -->
+          <div class="arch-branches" style="flex-direction:column;gap:10px">
+            <div class="arch-branch arch-branch-mlp">
+              <div class="arch-branch-title" style="color:var(--gold)">MLP</div>
+              <div class="arch-branch-sub">Multilayer Perceptron</div>
+              <div class="arch-layer">Dense 256</div>
+              <div class="arch-layer-arrow" style="color:var(--gold)">↓</div>
+              <div class="arch-layer">ReLU + Dropout</div>
+              <div class="arch-layer-arrow" style="color:var(--gold)">↓</div>
+              <div class="arch-layer">Dense 64</div>
+            </div>
+            <div class="arch-branch arch-branch-snn">
+              <div class="arch-branch-title" style="color:var(--teal)">SNN</div>
+              <div class="arch-branch-sub">Self-Normalizing Network</div>
+              <div class="arch-layer">Dense 256 · SELU</div>
+              <div class="arch-layer-arrow" style="color:var(--teal)">↓</div>
+              <div class="arch-layer">AlphaDropout</div>
+              <div class="arch-layer-arrow" style="color:var(--teal)">↓</div>
+              <div class="arch-layer">Dense 64 · SELU</div>
+            </div>
+            <div class="arch-branch arch-branch-tab">
+              <div class="arch-branch-title" style="color:var(--orange)">TabNet</div>
+              <div class="arch-branch-sub">Attention-based Tabular</div>
+              <div class="arch-layer">Step Attention Mask</div>
+              <div class="arch-layer-arrow" style="color:var(--orange)">↓</div>
+              <div class="arch-layer">Feature Transform</div>
+              <div class="arch-layer-arrow" style="color:var(--orange)">↓</div>
+              <div class="arch-layer">Aggregated Output</div>
+            </div>
+          </div>
+          <div class="arch-arrow"><i data-lucide="arrow-right" style="width:20px;height:20px"></i></div>
+          <!-- Meta-learner -->
+          <div class="arch-meta-box" style="align-self:center">
+            <i data-lucide="brain-circuit" class="arch-meta-icon" style="width:28px;height:28px"></i>
+            <div class="arch-meta-title">Ridge</div>
+            <div class="arch-meta-sub">Meta-Learner</div>
+            <div class="arch-meta-metric">R² Score</div>
+            <div class="arch-meta-r2">0.6051</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics + Feature Importance -->
+      <div class="metrics-row">
+        <div class="card" style="padding:24px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+            <i data-lucide="trophy" style="width:18px;height:18px;color:var(--gold)"></i>
+            <span style="font-family:var(--font-mono);font-size:18px;font-weight:700">Performance Metrics</span>
+          </div>
+          <table class="perf-table">
+            <thead class="perf-thead">
+              <tr><th>Model</th><th>R²</th><th>MAE</th><th>RMSE</th></tr>
+            </thead>
+            <tbody>
+              <tr class="perf-row"><td class="perf-name">OLS Baseline</td><td><div class="perf-bar-wrap"><div class="perf-bar-track"><div class="perf-bar-fill" style="width:47%;background:#64748B"></div></div><span class="perf-r2">0.4747</span></div></td><td style="font-family:var(--font-mono);font-size:12px">1.6455</td><td style="font-family:var(--font-mono);font-size:12px">2.0882</td></tr>
+              <tr class="perf-row"><td class="perf-name" style="color:var(--gold)">MLP</td><td><div class="perf-bar-wrap"><div class="perf-bar-track"><div class="perf-bar-fill" style="width:61%;background:var(--gold)"></div></div><span class="perf-r2" style="color:var(--gold)">0.6111</span></div></td><td style="font-family:var(--font-mono);font-size:12px">1.3644</td><td style="font-family:var(--font-mono);font-size:12px">1.7967</td></tr>
+              <tr class="perf-row"><td class="perf-name" style="color:var(--teal)">SNN</td><td><div class="perf-bar-wrap"><div class="perf-bar-track"><div class="perf-bar-fill" style="width:50%;background:var(--teal)"></div></div><span class="perf-r2" style="color:var(--teal)">0.4954</span></div></td><td style="font-family:var(--font-mono);font-size:12px">1.6364</td><td style="font-family:var(--font-mono);font-size:12px">2.0466</td></tr>
+              <tr class="perf-row"><td class="perf-name" style="color:var(--orange)">TabNet</td><td><div class="perf-bar-wrap"><div class="perf-bar-track"><div class="perf-bar-fill" style="width:46%;background:var(--orange)"></div></div><span class="perf-r2" style="color:var(--orange)">0.4581</span></div></td><td style="font-family:var(--font-mono);font-size:12px">1.3859</td><td style="font-family:var(--font-mono);font-size:12px">2.1209</td></tr>
+              <tr class="perf-row winner-row"><td class="perf-name" style="color:var(--gold);font-weight:700">Ensemble ★</td><td><div class="perf-bar-wrap"><div class="perf-bar-track"><div class="perf-bar-fill" style="width:61%;background:var(--gold)"></div></div><span class="perf-r2" style="color:var(--gold);font-weight:700">0.6051</span></div></td><td style="font-family:var(--font-mono);font-size:12px;color:#34D399;font-weight:700">1.2995</td><td style="font-family:var(--font-mono);font-size:12px">1.8105</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:11px;color:var(--text-tertiary);font-style:italic;margin-top:12px">★ Best performing model · MAE in log₁₀(KSh/acre)</p>
+        </div>
+        <div class="card" style="padding:24px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
+            <i data-lucide="bar-chart-2" style="width:18px;height:18px;color:var(--teal)"></i>
+            <span style="font-family:var(--font-mono);font-size:18px;font-weight:700">TabNet Feature Importance</span>
+          </div>
+          <div class="feat-row">
+            <div class="feat-header">
+              <div class="feat-name"><i data-lucide="route" style="width:10px;height:10px;color:var(--gold)"></i> distance_to_road</div>
+              <span class="feat-pct" style="color:var(--gold)">84.0%</span>
+            </div>
+            <div class="feat-track"><div class="feat-fill" style="width:84%;background:linear-gradient(90deg,rgba(212,175,55,0.4),var(--gold))"></div></div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-header">
+              <div class="feat-name"><i data-lucide="map-pin" style="width:10px;height:10px;color:var(--teal)"></i> county_id</div>
+              <span class="feat-pct" style="color:var(--teal)">56.0%</span>
+            </div>
+            <div class="feat-track"><div class="feat-fill" style="width:56%;background:linear-gradient(90deg,rgba(20,184,166,0.4),var(--teal))"></div></div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-header">
+              <div class="feat-name"><i data-lucide="building-2" style="width:10px;height:10px;color:var(--orange)"></i> is_commercial</div>
+              <span class="feat-pct" style="color:var(--orange)">38.0%</span>
+            </div>
+            <div class="feat-track"><div class="feat-fill" style="width:38%;background:linear-gradient(90deg,rgba(236,91,19,0.4),var(--orange))"></div></div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-header">
+              <div class="feat-name"><i data-lucide="trending-up" style="width:10px;height:10px;color:#94A3B8"></i> elevation_m</div>
+              <span class="feat-pct" style="color:#94A3B8">22.0%</span>
+            </div>
+            <div class="feat-track"><div class="feat-fill" style="width:22%;background:linear-gradient(90deg,rgba(148,163,184,0.4),#94A3B8)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline + Lexicon -->
+      <div class="pipeline-section">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:22px;font-weight:700;margin-bottom:28px">Data Pipeline</div>
+          <div class="timeline">
+            <div class="tl-node">
+              <div class="tl-dot tl-dot-gold"></div>
+              <div class="tl-title">Scraping & Ingestion</div>
+              <div class="tl-body">Automated crawlers targeting BuyRentKenya and Property24. Deduplication of 15,000+ records.</div>
+            </div>
+            <div class="tl-node">
+              <div class="tl-dot tl-dot-teal"></div>
+              <div class="tl-title">Feature Engineering</div>
+              <div class="tl-body">Haversine distance calculations to CBDs and transport hubs.</div>
+            </div>
+            <div class="tl-node">
+              <div class="tl-dot tl-dot-orange"></div>
+              <div class="tl-title">Embedding Generation</div>
+              <div class="tl-body">Latent representations of Nairobi counties using K-Means clustering.</div>
+            </div>
+            <div class="tl-node" style="margin-bottom:0">
+              <div class="tl-dot tl-dot-pulse"></div>
+              <div class="tl-title" style="color:var(--gold)">Model Inference</div>
+              <div class="tl-body">Real-time prediction through the Ridge Meta-Learner API at <code style="font-family:var(--font-mono);font-size:11px;color:var(--teal)">kenya-land-valuation-project.onrender.com</code></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:22px;font-weight:700;margin-bottom:28px">Feature Lexicon</div>
+          <div class="card" style="overflow:hidden">
+            <table class="lexicon-table">
+              <thead class="lex-thead"><tr><th>Feature</th><th>Type</th></tr></thead>
+              <tbody>
+                <tr class="lex-row"><td class="lex-name">distance_to_road</td><td><span class="type-badge type-numeric">Numeric</span></td></tr>
+                <tr class="lex-row"><td class="lex-name">county_id</td><td><span class="type-badge type-ordinal">Ordinal</span></td></tr>
+                <tr class="lex-row"><td class="lex-name">is_commercial</td><td><span class="type-badge type-boolean">Boolean</span></td></tr>
+                <tr class="lex-row"><td class="lex-name">elevation_m</td><td><span class="type-badge type-numeric">Numeric</span></td></tr>
+                <tr class="lex-row"><td class="lex-name">amenity_score</td><td><span class="type-badge type-numeric">Numeric</span></td></tr>
+                <tr class="lex-row"><td class="lex-name">road_score</td><td><span class="type-badge type-numeric">Numeric</span></td></tr>
+                <tr class="lex-row"><td class="lex-name">infra_score</td><td><span class="type-badge type-numeric">Numeric</span></td></tr>
+                <tr class="lex-row"><td class="lex-name">plot_size_acres</td><td><span class="type-badge type-numeric">Numeric</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Limitations -->
+      <div style="margin-bottom:40px">
+        <div style="font-family:var(--font-mono);font-size:22px;font-weight:700;margin-bottom:24px">Known Limitations</div>
+        <div class="limit-cards">
+          <div class="card limit-card limit-card-amber">
+            <div class="limit-icon"><i data-lucide="alert-triangle" style="width:22px;height:22px;color:#FBBF24"></i></div>
+            <div class="limit-title">Data Coverage</div>
+            <span class="badge" style="background:rgba(251,191,36,0.12);color:#FBBF24;border:1px solid rgba(251,191,36,0.3);margin-bottom:10px;display:inline-flex">MEDIUM</span>
+            <p class="limit-body">Dataset limited to 813 high-quality records. Under-represented in rural Machakos and Kajiado regions.</p>
+          </div>
+          <div class="card limit-card limit-card-teal">
+            <div class="limit-icon"><i data-lucide="info" style="width:22px;height:22px;color:var(--teal)"></i></div>
+            <div class="limit-title">County Classification</div>
+            <span class="badge badge-teal" style="margin-bottom:10px;display:inline-flex">RESOLVED</span>
+            <p class="limit-body">Historical misclassification of Nairobi sub-regions corrected via reverse geocoding on Lat/Lon pairs.</p>
+          </div>
+          <div class="card limit-card limit-card-orange">
+            <div class="limit-icon"><i data-lucide="alert-circle" style="width:22px;height:22px;color:var(--orange)"></i></div>
+            <div class="limit-title">Price Type</div>
+            <span class="badge badge-orange" style="margin-bottom:10px;display:inline-flex">NOTE</span>
+            <p class="limit-body">Model predicts Asking Price. Final transaction prices may vary 5–12% based on negotiation data gaps.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <a href="https://github.com/uchih-a/kenya-land-valuation-project" target="_blank" class="footer-left">
+        <i data-lucide="github" style="width:16px;height:16px"></i>
+        github.com/uchih-a/kenya-land-valuation-project
+      </a>
+      <div class="footer-right">
+        <span class="status-online"><span class="status-dot"></span>ONLINE</span>
+        <span class="footer-sep">·</span><span>~142ms</span>
+        <span class="footer-sep">·</span><span>99.2% uptime</span>
+      </div>
+    </footer>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  // Header nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('[data-page="' + page + '"]')?.classList.add('active');
+  // Taskbar
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab-btn[data-page="' + page + '"]')?.classList.add('active');
+  // Header visibility
+  const header = document.getElementById('main-header');
+  if (page === 'map') {
+    header.style.display = 'none';
+  } else {
+    header.style.display = '';
+  }
+  // Teal patch position
+  const tealPatches = { landing: 'top:20%;left:-100px', estimator: 'bottom:20%;right:-100px', dashboard: 'top:60%;right:-100px', map: 'top:30%;left:-100px', model: 'bottom:30%;left:-100px' };
+  document.getElementById('teal-patch').style.cssText += ';' + tealPatches[page];
+  window.scrollTo(0, 0);
+  lucide.createIcons();
+}
+
+// ═══════════════════════════════════════════════
+// COUNT UP ANIMATION
+// ═══════════════════════════════════════════════
+function countUp(id, target, suffix='', duration=1500) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = Date.now();
+  const tick = () => {
+    const progress = Math.min((Date.now() - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(ease * target) + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD DATA
+// ═══════════════════════════════════════════════
+const counties = [
+  { name:'Nairobi', price:'120M', score:31, spark:[3,3,4,4,3], trend:'down' },
+  { name:'Kiambu', price:'35M', score:87, spark:[2,3,4,4,5], trend:'up' },
+  { name:'Machakos', price:'18M', score:74, spark:[2,2,3,4,4], trend:'up' },
+  { name:'Nakuru', price:'22M', score:71, spark:[2,3,3,3,4], trend:'up' },
+  { name:'Kisumu', price:'12M', score:58, spark:[3,3,3,3,3], trend:'neutral' },
+  { name:'Kajiado', price:'28M', score:55, spark:[2,3,4,4,5], trend:'up' },
+  { name:'Nyeri', price:'8M', score:48, spark:[3,3,2,2,3], trend:'neutral' },
+  { name:'Mombasa', price:'45M', score:28, spark:[3,3,3,4,3], trend:'down' }
+];
+
+function buildLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  if (!lb) return;
+  lb.innerHTML = counties.map((c, i) => {
+    const rankEl = i < 3 ? `<div class="rank-badge">${i+1}</div>` : `<span class="rank-num">${i+1}</span>`;
+    const scoreClass = c.score > 70 ? 'score-high' : c.score > 40 ? 'score-mid' : 'score-low';
+    const trendIcon = c.trend === 'up' ? '↑' : c.trend === 'down' ? '↓' : '→';
+    const trendClass = c.trend === 'up' ? 'trend-up' : c.trend === 'down' ? 'trend-down' : '';
+    const sparkline = buildSparkline(c.spark, c.trend);
+    return `<div class="lb-row">
+      <div class="lb-rank">${rankEl}</div>
+      <div class="lb-county"><div class="lb-county-name">${c.name}</div></div>
+      <svg class="lb-sparkline" viewBox="0 0 60 20">${sparkline}</svg>
+      <div class="lb-price">${c.price}</div>
+      <div class="lb-score ${scoreClass}">${c.score}</div>
+      <div class="lb-trend ${trendClass}" style="font-size:12px">${trendIcon}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildSparkline(data, trend) {
+  const color = trend === 'up' ? 'var(--teal)' : trend === 'down' ? 'var(--orange)' : '#64748B';
+  const max = Math.max(...data), min = Math.min(...data);
+  const pts = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * 56 + 2;
+    const y = 18 - ((v - min) / (max - min || 1)) * 14;
+    return `${x},${y}`;
+  }).join(' ');
+  return `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
+}
+
+function buildCountyBars() {
+  const bars = document.getElementById('county-bars');
+  if (!bars) return;
+  const data = [
+    { name:'Nairobi', val:120, pct:100 },
+    { name:'Mombasa', val:45, pct:37 },
+    { name:'Kiambu', val:35, pct:29 },
+    { name:'Kajiado', val:28, pct:23 },
+    { name:'Nakuru', val:22, pct:18 },
+    { name:'Machakos', val:18, pct:15 },
+    { name:'Kisumu', val:12, pct:10 },
+    { name:'Nyeri', val:8, pct:7 },
+    { name:'Kisii', val:5, pct:4 },
+    { name:'Eldoret', val:4, pct:3 }
+  ];
+  bars.innerHTML = data.map(d => `
+    <div class="hbar-row">
+      <div class="hbar-label">${d.name}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${d.pct}%"></div></div>
+      <div class="hbar-value">${d.val}M</div>
+    </div>`).join('');
+}
+
+function buildGroupedBars() {
+  const el = document.getElementById('grouped-bars');
+  if (!el) return;
+  const data = [
+    { name:'Nairobi', am:85, rd:42, in:92 },
+    { name:'Kiambu', am:78, rd:65, in:88 },
+    { name:'Mombasa', am:71, rd:58, in:75 },
+    { name:'Nakuru', am:62, rd:70, in:55 },
+    { name:'Kisumu', am:55, rd:68, in:48 },
+    { name:'Machakos', am:48, rd:52, in:42 }
+  ];
+  el.innerHTML = data.map(d => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;width:72px;flex-shrink:0">${d.name}</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+        <div style="height:9px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${d.am}%;background:var(--gold);border-radius:4px"></div>
+        </div>
+        <div style="height:9px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${d.rd}%;background:var(--teal);border-radius:4px"></div>
+        </div>
+        <div style="height:9px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${d.in}%;background:var(--orange);border-radius:4px"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// FILTER
+// ═══════════════════════════════════════════════
+function filterCounty(btn, county) {
+  document.querySelectorAll('.filter-pills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+}
+function clearFilters() {
+  document.querySelectorAll('.filter-pills .pill').forEach((p, i) => {
+    p.classList.toggle('active', i === 0);
+  });
+  document.querySelectorAll('.seg-pill').forEach((p, i) => {
+    p.classList.toggle('active', i === 0);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// MAP TABS
+// ═══════════════════════════════════════════════
+function switchMapTab(btn, type) {
+  document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  // Animate opacity change
+  const viz = document.getElementById('map-viz');
+  viz.style.opacity = '0.3';
+  setTimeout(() => { viz.style.opacity = '1'; viz.style.transition = 'opacity 0.3s'; }, 300);
+}
+
+// ═══════════════════════════════════════════════
+// ESTIMATOR
+// ═══════════════════════════════════════════════
+function updateScore(id, val) {
+  const el = document.getElementById(id);
+  const num = parseInt(val);
+  el.textContent = num + '/100';
+  el.className = num > 70 ? 'score-value-good' : num > 40 ? 'score-value-mid' : 'score-value-low';
+}
+function runEstimate() {
+  const priceEl = document.getElementById('est-price');
+  const btn = event.target.closest('button');
+  btn.textContent = 'CALCULATING...';
+  setTimeout(() => {
+    const prices = ['43.8M', '45.2M', '46.1M', '44.5M'];
+    priceEl.textContent = prices[Math.floor(Math.random()*prices.length)];
+    btn.innerHTML = '<i data-lucide="zap" style="width:18px;height:18px"></i> RUN AI ESTIMATION';
+    lucide.createIcons();
+  }, 1200);
+}
+
+// ═══════════════════════════════════════════════
+// MAP PREDICT
+// ═══════════════════════════════════════════════
+function mapPredict() {
+  const result = document.getElementById('pp-result');
+  const btn = event.target.closest('button');
+  btn.textContent = 'PREDICTING...';
+  setTimeout(() => {
+    result.style.display = 'block';
+    result.style.animation = 'fadeIn 0.3s ease both';
+    btn.innerHTML = '<i data-lucide="zap" style="width:16px;height:16px"></i> PREDICT PRICE';
+    lucide.createIcons();
+  }, 900);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  // Count up stats
+  setTimeout(() => {
+    countUp('cnt-813', 813);
+    countUp('cnt-47', 47);
+    countUp('cnt-61', 61, '%');
+    countUp('cnt-3', 3);
+  }, 600);
+  // Build dashboard
+  buildLeaderboard();
+  buildCountyBars();
+  buildGroupedBars();
+  // Map hover tooltips
+  document.querySelectorAll('#hero-map path').forEach(path => {
+    path.addEventListener('mouseenter', (e) => {
+      const county = e.target.getAttribute('data-county');
+      const price = e.target.getAttribute('data-price');
+      if (!county) return;
+      let tooltip = document.getElementById('map-tooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'map-tooltip';
+        tooltip.style.cssText = 'position:fixed;background:rgba(10,15,30,0.95);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:8px 12px;pointer-events:none;z-index:999;backdrop-filter:blur(12px);font-size:11px;';
+        document.body.appendChild(tooltip);
+      }
+      tooltip.innerHTML = `<div style="font-family:var(--font-mono);font-size:10px;color:#D4AF37;text-transform:uppercase;letter-spacing:1px">${county}</div><div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:white;margin-top:2px">${price}/acre</div>`;
+      tooltip.style.display = 'block';
+    });
+    path.addEventListener('mousemove', (e) => {
+      const tooltip = document.getElementById('map-tooltip');
+      if (tooltip) { tooltip.style.left = (e.clientX + 14) + 'px'; tooltip.style.top = (e.clientY - 8) + 'px'; }
+    });
+    path.addEventListener('mouseleave', () => {
+      const tooltip = document.getElementById('map-tooltip');
+      if (tooltip) tooltip.style.display = 'none';
+    });
+  });
+});
+</script>
+</body>
+</html>

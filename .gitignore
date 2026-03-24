@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Junk files
+*.zip
+*.log
+file-sturucture.txt
+land/
+thamani-frontend/
+thamani-frontend.zip
+backend.zip
+scaffold.sh
+documents /
+
+# Vite cache
+frontend/.vite/
+
+# OS
+.DS_Store
